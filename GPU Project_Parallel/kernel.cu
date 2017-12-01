@@ -386,7 +386,13 @@ public:
 
 __global__ void PrintBoard(Configuration *c)
 {
-	c->Configuration::PrintBoard();
+	for (int i = 0; i < Configuration::ROWS; i++) {
+		for (int j = 0; j < Configuration::COLUMNS; j++) {
+			int idx = i*Configuration::COLUMNS + j;
+			printf("%c", c->dev_board[idx]);
+		}
+	}
+
 }
 
 __global__ void MiniMax(Configuration* configurations, int depth, int alpha, int beta) {
@@ -469,13 +475,13 @@ int main()
 		while (getline(testFile, line)) {
 
 			Configuration *c = new Configuration(line);
+			//Configuration *configurations = new Configuration[1];
+			//configurations[0] = *c;
+			//cudaMalloc(&dev_c, sizeof(configurations));
+			//cudaMemcpy(dev_c, configurations, sizeof(configurations), cudaMemcpyHostToDevice);
+
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
-			Configuration *tmp;
-			cudaMalloc(&tmp, sizeof(Configuration));
-			cudaMemcpy(tmp, dev_c, sizeof(Configuration), cudaMemcpyDeviceToHost);
-
-
 			//tmp->PrintBoard();
 			/*cudaMalloc((void **)&dev_c->dev_board, 6 * sizeof(char));
 			cudaMemcpy(dev_c->dev_board, c->board, 6 * sizeof(char), cudaMemcpyHostToDevice);
@@ -485,7 +491,8 @@ int main()
 				cudaMemcpy(dev_c->dev_board[i], c->board[i], 7 * sizeof(char), cudaMemcpyHostToDevice);
 			}*/
 			
-			PrintBoard<< <1, 1>> >(dev_c);
+			//MiniMax<< <1, 1>> >(dev_c,1,-100,100);
+			PrintBoard << <1, 1 >> > (dev_c);
 
 			/*writeInFile << c;
 			int solution = solver.MinMax(c, 10, numeric_limits<int>::min(), numeric_limits<int>::max());
