@@ -8,10 +8,17 @@
 #include <cstdint>
 #include <cassert>
 #include <vector>
+#include <algorithm>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
+#include "device_functions.h"
+#include "sm_32_atomic_functions.h"
 
 using namespace std;
+
+__device__ int gAlpha=-100;
+__device__ int gBeta=100;
+__device__ int gScore=0;
 
 struct lastMove {
 	int row; int column; char player; int value;
@@ -29,23 +36,25 @@ public:
 	static const int COLUMNS = 7; // height of the board
 	static const int MIN_SCORE = -(ROWS*COLUMNS) / 2 + 3;
 	static const int MAX_SCORE = (ROWS*COLUMNS + 1) / 2 - 3;
-
-	char** board;
+	
+	int numberOfConfigurations=0;
+	char* board;
 	char* dev_board;
-
+	lastMove mLastmove = lastMove(-1, -1, 'n', 0);
 private:
 	int NumberOfMoves;
-
+	
 	int NumberOfStartMoves;
 
-	lastMove mLastmove = lastMove(-1, -1, 'n', 0);
+	
 
 public:
+	Configuration() {}
 	Configuration(string boardConfiguration) {
 		SetupBoard(boardConfiguration);
 
 		cudaMalloc((void **)&dev_board, 6 * 7 * sizeof(char*));
-		cudaMemcpy(dev_board, board[0], 6 * 7 * sizeof(char*), cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_board, board, 6 * 7 * sizeof(char*), cudaMemcpyHostToDevice);
 
 		/*for (int i = 0; i < 6; i++) {
 			cudaMalloc(&board[i], 7 * sizeof(char));
@@ -62,24 +71,22 @@ public:
 		NumberOfStartMoves = NumberOfMoves;
 	}
 
-	__device__ __host__ Configuration(char** _board, lastMove _move, int numMoves, int startMoves) {
-		_board[_move.row][_move.column] = _move.player;
+	__device__ __host__ Configuration(char* _board, lastMove _move, int numMoves, int startMoves,int numConfig) {
+		_board[_move.row*COLUMNS+_move.column] = _move.player;
 		mLastmove.row = _move.row;
 		mLastmove.column = _move.column;
 		mLastmove.player = _move.player;
 		NumberOfStartMoves = startMoves;
 		NumberOfMoves = numMoves + 1;
-		board = new char*[ROWS];
-		for (int i = 0; i < ROWS; i++) {
-			board[i] = new char[COLUMNS];
-		}
+		numberOfConfigurations = numConfig;
 
-		for (int i = 0; i < ROWS; i++) {
-			for (int j = 0; j < COLUMNS; j++) {
-				board[i][j] = _board[i][j];
-			}
+		//cudaMalloc((void **)&dev_board, 6 * 7 * sizeof(char*));
+		cudaMemcpy(dev_board, _board, 6 * 7 * sizeof(char*), cudaMemcpyDeviceToDevice);
 
-		}
+		/*dev_board = new char[ROWS*COLUMNS];
+		for (int i = 0; i < ROWS*COLUMNS; i++) {
+			board[i] = _board[i];
+		}*/
 	}
 
 
@@ -91,7 +98,7 @@ public:
 		int counter = 0;
 		//check the column
 		for (int j = 0; j < COLUMNS; j++) {
-			if (board[mLastmove.row][j] == mLastmove.player) {
+			if (dev_board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
 					return true;
@@ -102,7 +109,7 @@ public:
 		counter = 0;
 		//check the row
 		for (int i = 0; i < ROWS; i++) {
-			if (board[i][mLastmove.column] == mLastmove.player) {
+			if (dev_board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
 					return true;
@@ -113,7 +120,7 @@ public:
 		counter = 0;
 		//check right diagonal
 		for (int k = 0; (k + mLastmove.row < ROWS && k + mLastmove.column < COLUMNS); k++) {
-			if (board[mLastmove.row + k][mLastmove.column + k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
 					return true;
@@ -123,7 +130,7 @@ public:
 		}
 		counter = 0;
 		for (int k = 0; (mLastmove.row - k >= 0 && mLastmove.column - k >= 0); k++) {
-			if (board[mLastmove.row - k][mLastmove.column - k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
 					return true;
@@ -134,7 +141,7 @@ public:
 		//check left diagonal
 		counter = 0;
 		for (int k = 0; (k + mLastmove.row < ROWS && mLastmove.column - k >= 0); k++) {
-			if (board[mLastmove.row + k][mLastmove.column - k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
 				counter++;
 
 				if (counter >= 4)
@@ -145,7 +152,7 @@ public:
 		}
 		counter = 0;
 		for (int k = 0; (mLastmove.row - k >= 0 && k + mLastmove.column < COLUMNS); k++) {
-			if (board[mLastmove.row - k][mLastmove.column + k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
 				counter++;
 
 				if (counter >= 4)
@@ -160,23 +167,17 @@ public:
 	__device__ __host__ void PrintBoard() {
 		for (int i = 0; i < Configuration::ROWS; i++) {
 			for (int j = 0; j < Configuration::COLUMNS; j++) {
-				printf("%c",board[i][j]);
+				printf("%c", dev_board[i*Configuration::COLUMNS+j]);
 			}
 			printf("\n");
 		}
 	}
 
-	__device__ __host__ char** getBoard() {
-		char ** _board = new char*[ROWS];
-		for (int i = 0; i < ROWS; i++)
-		{
-			_board[i] = new char[COLUMNS];
-		}
+	__device__ __host__ char* getBoard() {
+		char * _board = new char[ROWS*COLUMNS];
 
-		for (int i = 0; i < ROWS; i++) {
-			for (int j = 0; j < COLUMNS; j++) {
-				_board[i][j] = board[i][j];
-			}
+		for (int i = 0; i < ROWS*COLUMNS; i++) {
+			_board[i] = dev_board[i];
 		}
 		return _board;
 	}
@@ -197,28 +198,17 @@ public:
 
 	__device__ __host__ void deleteBoard()
 	{
-		/*for (int i = 0; i < ROWS; i++) {
-			delete[] board[i];
-		}*/
 		delete[] board;
+		delete[] dev_board;
 	}
 
 	__device__ __host__ ~Configuration() {
 	}
 
-private:
-
 	__device__ __host__ void SetupBoard(string boardConfiguration) {
-		board = new char*[ROWS];
-		board[0] = new char[ROWS*COLUMNS];
-		for (int i = 1; i < ROWS; ++i) {
-			board[i] = board[i - 1] + COLUMNS;
-		}
-		for (int i = 0; i < (boardConfiguration.length() / 7); i++) {
-			int muliply = i * 7;
-			for (int j = 0; j < 7; j++) {
-				board[i % 6][j] = boardConfiguration[muliply + j];
-			}
+		board = new char[ROWS*COLUMNS];
+		for (int i = 0; i <boardConfiguration.length(); i++) {
+			board[i] = boardConfiguration[i];
 		}
 	}
 
@@ -230,7 +220,7 @@ private:
 		int counter = 0;
 		//check the column
 		for (int j = (mLastmove.column - pawnInARow > 0 ? mLastmove.column - pawnInARow : 0); j < (mLastmove.column + pawnInARow < COLUMNS ? mLastmove.column + pawnInARow : COLUMNS); j++) {
-			if (board[mLastmove.row][j] == mLastmove.player) {
+			if (dev_board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
 				counter++;
 				if (counter >= pawnInARow) {
 					value += pawnInARow;
@@ -243,7 +233,7 @@ private:
 		counter = 0;
 		//check the row
 		for (int i = (mLastmove.row - pawnInARow > 0 ? mLastmove.row - pawnInARow : 0); i < (mLastmove.row + pawnInARow < ROWS ? mLastmove.row + pawnInARow : ROWS); i++) {
-			if (board[i][mLastmove.column] == mLastmove.player) {
+			if (dev_board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
 				counter++;
 				if (counter >= pawnInARow) {
 					value += pawnInARow;
@@ -256,7 +246,7 @@ private:
 		counter = 0;
 		//check right diagonal
 		for (int k = 0; (k + mLastmove.row < ROWS && k + mLastmove.column < COLUMNS); k++) {
-			if (board[mLastmove.row + k][mLastmove.column + k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
 				counter++;
 				if (counter >= pawnInARow) {
 					value += pawnInARow;
@@ -268,7 +258,7 @@ private:
 		}
 		counter = 0;
 		for (int k = 0; (mLastmove.row - k >= 0 && mLastmove.column - k >= 0); k++) {
-			if (board[mLastmove.row - k][mLastmove.column - k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
 				counter++;
 				if (counter >= pawnInARow) {
 					value += pawnInARow;
@@ -281,7 +271,7 @@ private:
 		//check left diagonal
 		counter = 0;
 		for (int k = 0; (k + mLastmove.row < ROWS && mLastmove.column - k >= 0); k++) {
-			if (board[mLastmove.row + k][mLastmove.column - k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
 				counter++;
 				if (counter >= pawnInARow) {
 					value += pawnInARow;
@@ -293,7 +283,7 @@ private:
 		}
 		counter = 0;
 		for (int k = 0; (mLastmove.row - k >= 0 && k + mLastmove.column < COLUMNS); k++) {
-			if (board[mLastmove.row - k][mLastmove.column + k] == mLastmove.player) {
+			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
 				counter++;
 				if (counter >= pawnInARow) {
 					value += pawnInARow;
@@ -303,15 +293,15 @@ private:
 			else
 				counter = 0;
 		}
-
+		
 		for (int i = 0; i < ROWS; i++) {
 			counter = 0;
 			for (int j = 0; j < COLUMNS; j++) {
-				if (board[i][j] != mLastmove.player &&board[i][j] != '-') {
+				if (dev_board[i*COLUMNS + j] != mLastmove.player &&board[i*COLUMNS + j] != '-') {
 					counter++;
 					if (counter >= pawnInARow) {
 						if (j - counter >= 1) {
-							if (board[i][j - counter] == '-')
+							if (dev_board[i*COLUMNS + (j - counter)] == '-')
 								value -= pawnInARow;
 						}
 						break;
@@ -325,15 +315,15 @@ private:
 		for (int j = 0; j < COLUMNS; j++) {
 			counter = 0;
 			for (int i = 0; i < ROWS; i++) {
-				if (board[i][j] != mLastmove.player &&board[i][j] != '-') {
+				if (dev_board[i*COLUMNS + j] != mLastmove.player && dev_board[i*COLUMNS + j] != '-') {
 					counter++;
 					if (counter >= pawnInARow) {
 						if (i - counter >= 1) {
-							if (board[i - counter][j] == '-')
+							if (dev_board[(i - counter)*COLUMNS + j] == '-')
 								value -= pawnInARow;
 						}
 						if (i < ROWS - 1) {
-							if (board[i + 1][j] == '-')
+							if (dev_board[(i + 1)*COLUMNS + j] == '-')
 								value -= pawnInARow;
 						}
 						break;
@@ -347,70 +337,118 @@ private:
 	}
 
 	//genera le sette mosse successive
-	__device__ __host__ vector<lastMove> GenerateNextMoves(char player) {
+	__device__ __host__ Configuration* GenerateNextMoves(char player) {
 
-		vector<lastMove> moves = vector<lastMove>();
+		int idx = 0;
+		int counter = 0;
 		for (int j = 0; j < COLUMNS; j++) {
 			for (int i = ROWS - 1; i >= 0; i--) {
-				if (board[i][j] == '-') {
-					moves.push_back(lastMove(i, j, player, 0));
+				idx = i*COLUMNS + j;
+				if (dev_board[idx] == '-') {
+					counter++;
 					break;
 				}
 			}
 		}
-		return SortNextMoves(moves);
-
-	}
-
-	__device__ __host__ vector<lastMove> SortNextMoves(vector<lastMove> moves) {
-		bool bDone = false;
-		for (int i = 0; i < moves.size(); ++i) {
-			board[moves[i].row][moves[i].column] = moves[i].player;
-			moves[i].value = ValutateMove(moves[i], 2) + ValutateMove(moves[i], 3);
-			board[moves[i].row][moves[i].column] = '-';
-		}
-
-		while (!bDone) {
-			bDone = true;
-			for (int i = 0; i < moves.size() - 1; ++i) {
-				if (moves[i].value < moves[i + 1].value) {
-					lastMove tmp = moves[i];
-					moves[i] = moves[i + 1];
-					moves[i + 1] = tmp;
-					bDone = false;
+		numberOfConfigurations = counter;
+		if (numberOfConfigurations > 0) {
+			Configuration* configurations = new Configuration[counter];
+			idx = 0;
+			counter = 0;
+			for (int j = 0; j < COLUMNS; j++) {
+				for (int i = ROWS - 1; i >= 0; i--) {
+					idx = i*COLUMNS + j;
+					if (dev_board[idx] == '-') {
+						Configuration c = Configuration(dev_board, lastMove(i, j, player, 0), getNMoves(), NumberStartMoves(), numberOfConfigurations);
+						configurations[counter] = c;
+						counter++;
+						break;
+					}
 				}
 			}
+			return configurations;
 		}
-		return moves;
+
+		return nullptr;
 	}
 
 	__device__ __host__ friend ostream& operator<<(ostream& os, const Configuration& confg) {
 
-		for (int i = 0; i < Configuration::ROWS; i++) {
-			for (int j = 0; j < Configuration::COLUMNS; j++) {
-				os << confg.board[i][j];
-			}
-			os << endl;
+		for (int i = 0; i < Configuration::ROWS*Configuration::COLUMNS; i++) {
+			os << confg.board[i];
+			if (i % 7 == 0 && i != 0)
+				os << endl;
 		}
-
+		os << endl;
 		return os;
 	}
-
-
 };
 
 __global__ void PrintBoard(Configuration *c)
 {
+	c->Configuration::PrintBoard();
+}
 
-	//c->Configuration::PrintBoard();
-	//printf("%d", c->NumberStartMoves());
-	for (int i = 0; i < Configuration::ROWS; i++) {
-		for (int j = 0; j < Configuration::COLUMNS; j++) {
-			int idx = i*Configuration::COLUMNS + j;
-			printf("%c", c->dev_board[idx]);
+__global__ void MiniMax(Configuration* configurations, int depth, int alpha, int beta) {
+
+	int idx = threadIdx.x;
+	int numChildren;
+	if (configurations != nullptr)
+		numChildren = configurations[0].numberOfConfigurations;
+	else
+		numChildren = 0;
+
+	if (idx < numChildren) {
+
+		bool isWinningMove = configurations[idx].isWinningMove();
+		if (isWinningMove && configurations[idx].mLastmove.player == '0') {
+			int losingScore = -(configurations[idx].getNMoves() - configurations[idx].NumberStartMoves());
+			if (losingScore < beta || gBeta == 100)
+				//__SM_32_ATOMIC_FUNCTIONS_H__::min(gBeta,losingScore);
+				atomicMin(&gBeta, losingScore);
+		}
+		if (isWinningMove && configurations[idx].mLastmove.player == 'X')
+		{
+			int winningScore = (configurations[idx].getNMoves() - configurations[idx].NumberStartMoves());
+			if (winningScore > alpha || gAlpha == -100)
+				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,winningScore);
+				atomicMax(&gAlpha, winningScore);
+		}
+
+		if (configurations[idx].getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
+		{
+			int drawScore = 0;
+			if (drawScore > alpha || gAlpha == -100)
+				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,drawScore);
+				atomicMax(&gAlpha, drawScore);
+		}
+
+		//int min = -(Configuration::ROWS*Configuration::COLUMNS - 2 - configuration.getNMoves()) / 2;
+		if (alpha <= gAlpha)
+			alpha = gAlpha;
+		else
+			//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,alpha);
+			atomicMax(&gAlpha, alpha);
+
+		//int max = (Configuration::ROWS*Configuration::COLUMNS - 1 - configuration.getNMoves()) / 2;
+		if (beta > gBeta)
+			beta = gBeta;
+		else
+			//__SM_32_ATOMIC_FUNCTIONS_H__::min(gBeta, beta);
+			atomicMin(&gBeta, beta);
+
+		if (gAlpha >= gBeta)
+			return;
+
+		char nextPlayer = configurations[idx].mLastmove.player == 'X' ? '0' : 'X';
+		Configuration* moves = configurations[idx].GenerateNextMoves(nextPlayer);
+
+		if (depth > 0) {
+			MiniMax << <1, 1 >> >(configurations, depth - 1, alpha, beta);
 		}
 	}
 }
+
 int main()
 {
 	string line;
