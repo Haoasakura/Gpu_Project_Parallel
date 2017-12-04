@@ -21,7 +21,8 @@ __device__ int gScore=0;
 
 struct lastMove {
 	int row; int column; char player; int value;
-	lastMove(int _row, int _column, char _player, int _value) {
+	__device__ __host__ lastMove() {}
+	__device__ __host__ lastMove(int _row, int _column, char _player, int _value) {
 		row = _row;
 		column = _column;
 		player = _player;
@@ -50,7 +51,7 @@ private:
 
 public:
 	__device__ __host__ Configuration() {}
-	Configuration(string boardConfiguration) {
+	__host__ Configuration(string boardConfiguration) {
 
 		board = (char*)malloc(sizeof(char)*Configuration::BOARD_SIZE);
 
@@ -70,17 +71,135 @@ public:
 		NumberOfStartMoves = NumberOfMoves;
 	}
 
+	__device__  Configuration(char* _dev_board, lastMove _move, int numMoves, int startMoves, int numConfig) {
+		mLastmove.row = _move.row;
+		mLastmove.column = _move.column;
+		mLastmove.player = _move.player;
+		NumberOfStartMoves = startMoves;
+		NumberOfMoves = numMoves + 1;
+		numberOfConfigurations = numConfig;
 
+		dev_board = (char*)malloc(sizeof(char)*Configuration::BOARD_SIZE);
+		memcpy(dev_board,_dev_board,sizeof(char)*Configuration::BOARD_SIZE);
+		dev_board[_move.row * COLUMNS + _move.column] = _move.player;
+	}
+
+	__device__ bool isFull() {
+
+		int idx = 0;
+		int counter = 0;
+		for (int j = 0; j < COLUMNS; j++) {
+			for (int i = ROWS - 1; i >= 0; i--) {
+				idx = i*COLUMNS + j;
+				if (dev_board[idx] == '-') {
+					counter++;
+					break;
+				}
+			}
+		}
+
+		numberOfConfigurations = counter;
+		if (numberOfConfigurations > 0)
+			return false;
+		else
+			return true;
+	}
+
+	__device__ bool isWinningMove() {
+
+		if (mLastmove.row == -1)
+			return false;
+		int counter = 0;
+		//check the column
+		for (int j = 0; j < COLUMNS; j++) {
+			if (dev_board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
+				counter++;
+				if (counter >= 4)
+					return true;
+			}
+			else
+				counter = 0;
+		}
+		counter = 0;
+		//check the row
+		for (int i = 0; i < ROWS; i++) {
+			if (dev_board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
+				counter++;
+				if (counter >= 4)
+					return true;
+			}
+			else
+				counter = 0;
+		}
+		counter = 0;
+		//check right diagonal
+		for (int k = 0; (k + mLastmove.row < ROWS && k + mLastmove.column < COLUMNS); k++) {
+			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
+				counter++;
+				if (counter >= 4)
+					return true;
+			}
+			else
+				counter = 0;
+		}
+		counter = 0;
+		for (int k = 0; (mLastmove.row - k >= 0 && mLastmove.column - k >= 0); k++) {
+			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
+				counter++;
+				if (counter >= 4)
+					return true;
+			}
+			else
+				counter = 0;
+		}
+		//check left diagonal
+		counter = 0;
+		for (int k = 0; (k + mLastmove.row < ROWS && mLastmove.column - k >= 0); k++) {
+			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
+				counter++;
+
+				if (counter >= 4)
+					return true;
+			}
+			else
+				counter = 0;
+		}
+		counter = 0;
+		for (int k = 0; (mLastmove.row - k >= 0 && k + mLastmove.column < COLUMNS); k++) {
+			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
+				counter++;
+
+				if (counter >= 4)
+					return true;
+			}
+			else
+				counter = 0;
+		}
+		return false;
+	}
 
 	__device__ __host__ void PrintBoard() {
 		for (int i = 0; i < Configuration::ROWS; i++) {
 			for (int j = 0; j < Configuration::COLUMNS; j++) {
-				printf("%c", board[i*Configuration::COLUMNS+j]);
+				int idx = i*Configuration::COLUMNS + j;
+				printf("%c", dev_board[idx]);
 			}
 			printf("\n");
 		}
 	}
 
+	__device__ int getNMoves() {
+		return NumberOfMoves;
+	}
+
+	__device__ void setNMoves(int moves) {
+		NumberOfMoves = moves;
+	}
+
+	__device__ int NumberStartMoves()
+	{
+		return NumberOfStartMoves;
+	}
 
 	__device__ __host__ ~Configuration() {
 	}
@@ -88,16 +207,99 @@ public:
 
 __global__ void BoardPrint(Configuration *c)
 {
-
-	Configuration* tmp = new Configuration[1];
-	memcpy(&tmp[0],c,sizeof(Configuration));
 	for (int i = 0; i < Configuration::ROWS; i++) {
 		for (int j = 0; j < Configuration::COLUMNS; j++) {
 			int idx = i*Configuration::COLUMNS + j;
-			printf("%c", tmp[0].dev_board[idx]);
+			printf("%c", c->dev_board[idx]);
+		}
+		printf("\n");
+	}	
+}
+
+__global__ void MiniMax(Configuration* configuration, int depth, int alpha, int beta) {
+
+	int thread = threadIdx.x;
+	std::printf("%d \n", thread);
+	bool freeSpace = false;
+	Configuration* c;
+	c = (Configuration*)malloc(sizeof(Configuration));
+	char nextPlayer = configuration->mLastmove.player == 'X' ? '0' : 'X';
+	for (int i = Configuration::ROWS - 1; i >= 0; i--) {
+		int idx = i*Configuration::COLUMNS + thread;
+		if (configuration->dev_board[idx] == '-') {
+			c = new Configuration(configuration->dev_board, lastMove(i, thread, nextPlayer, 0), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+			freeSpace = true;
+			break;
+		}
+	}
+	/*if (thread == 2){
+		for (int i = 0; i < Configuration::ROWS; i++) {
+			for (int j = 0; j < Configuration::COLUMNS; j++) {
+				int idx = i*Configuration::COLUMNS + j;
+				printf("%c", c->dev_board[idx]);
+			}
+			printf("\n");
+		}
+	}*/
+
+	std::printf("free space %b", freeSpace);
+	if (freeSpace && thread < 7) {
+
+		bool isWinningMove = c->isWinningMove();
+		if (isWinningMove && c->mLastmove.player == '0') {
+			int losingScore = -(c->getNMoves() - c->NumberStartMoves());
+			if (losingScore < beta || gBeta == 100)
+				//__SM_32_ATOMIC_FUNCTIONS_H__::min(gBeta,losingScore);
+				atomicMin(&gBeta, losingScore);
+		}
+		if (isWinningMove && c->mLastmove.player == 'X')
+		{
+			int winningScore = (c->getNMoves() - c->NumberStartMoves());
+			if (winningScore > alpha || gAlpha == -100)
+				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,winningScore);
+				atomicMax(&gAlpha, winningScore);
+		}
+
+		if (c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
+		{
+			int drawScore = 0;
+			if (drawScore > alpha || gAlpha == -100)
+				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,drawScore);
+				atomicMax(&gAlpha, drawScore);
+		}
+
+		//int min = -(Configuration::ROWS*Configuration::COLUMNS - 2 - configuration.getNMoves()) / 2;
+		if (alpha <= gAlpha)
+			alpha = gAlpha;
+		else
+			//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,alpha);
+			atomicMax(&gAlpha, alpha);
+
+		//int max = (Configuration::ROWS*Configuration::COLUMNS - 1 - configuration.getNMoves()) / 2;
+		if (beta > gBeta)
+			beta = gBeta;
+		else
+			//__SM_32_ATOMIC_FUNCTIONS_H__::min(gBeta, beta);
+			atomicMin(&gBeta, beta);
+
+		if (gAlpha >= gBeta)
+			return;
+		/*if (configuration->isFull()) {
+			for (int i = 0; i < Configuration::ROWS; i++) {
+				for (int j = 0; j < Configuration::COLUMNS; j++) {
+					int idx = i*Configuration::COLUMNS + j;
+					printf("%c", c->dev_board[idx]);
+				}
+				printf("\n");
+			}
+		}*/
+		printf("%b", !configuration->isFull());
+		if (depth > 0 && !configuration->isFull()) {
+			MiniMax << <1, 7 >> > (c, depth - 1, alpha, beta);
 		}
 	}
 }
+
 
 int main()
 {
@@ -123,10 +325,17 @@ int main()
 
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
+			MiniMax << <1, 7 >> > (dev_c,10,-100,100);
 
-			BoardPrint << <1, 1 >> > (dev_c);
+			cudaDeviceSynchronize();
 
-			cudaDeviceReset();
+			printf("%d", gAlpha);
+			printf("%d", gBeta);
+			printf("   %d", gScore);
+
+
+			cudaFree(dev_c);
+			cudaDeviceReset();			
 			i++;
 			if (i >0)
 				break;
