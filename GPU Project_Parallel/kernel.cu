@@ -5,8 +5,6 @@
 #include <fstream>
 #include <string>
 #include <limits>
-#include <cstdint>
-#include <cassert>
 #include <vector>
 #include <algorithm>
 #include "cuda_runtime.h"
@@ -15,9 +13,10 @@
 
 using namespace std;
 
-__device__ int gAlpha=-100;
-__device__ int gBeta=100;
-__device__ int gScore=0;
+__device__ __managed__ int gAlpha=-100;
+__device__ __managed__ int gBeta=100;
+__device__ __managed__ int gScore=0;
+__device__ __managed__ unsigned int nodeCount = 0;
 
 struct lastMove {
 	int row; int column; char player; int value;
@@ -42,10 +41,10 @@ public:
 	char* board;
 	char* dev_board;
 	lastMove mLastmove = lastMove(-1, -1, 'n', 0);
+
 private:
-	int NumberOfMoves;
-	
-	int NumberOfStartMoves;
+	int NumberOfMoves=0;
+	int NumberOfStartMoves=0;
 
 	
 
@@ -182,7 +181,7 @@ public:
 		for (int i = 0; i < Configuration::ROWS; i++) {
 			for (int j = 0; j < Configuration::COLUMNS; j++) {
 				int idx = i*Configuration::COLUMNS + j;
-				printf("%c", dev_board[idx]);
+				printf("%c", board[idx]);
 			}
 			printf("\n");
 		}
@@ -213,13 +212,12 @@ __global__ void BoardPrint(Configuration *c)
 			printf("%c", c->dev_board[idx]);
 		}
 		printf("\n");
-	}	
+	}
 }
 
 __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int beta) {
-
 	int thread = threadIdx.x;
-	std::printf("%d \n", thread);
+	atomicAdd(&nodeCount,1);
 	bool freeSpace = false;
 	Configuration* c;
 	c = (Configuration*)malloc(sizeof(Configuration));
@@ -227,35 +225,26 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 	for (int i = Configuration::ROWS - 1; i >= 0; i--) {
 		int idx = i*Configuration::COLUMNS + thread;
 		if (configuration->dev_board[idx] == '-') {
+			//printf("%d \n", configuration->getNMoves());
 			c = new Configuration(configuration->dev_board, lastMove(i, thread, nextPlayer, 0), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 			freeSpace = true;
 			break;
 		}
 	}
-	/*if (thread == 2){
-		for (int i = 0; i < Configuration::ROWS; i++) {
-			for (int j = 0; j < Configuration::COLUMNS; j++) {
-				int idx = i*Configuration::COLUMNS + j;
-				printf("%c", c->dev_board[idx]);
-			}
-			printf("\n");
-		}
-	}*/
 
-	std::printf("free space %b", freeSpace);
 	if (freeSpace && thread < 7) {
 
 		bool isWinningMove = c->isWinningMove();
 		if (isWinningMove && c->mLastmove.player == '0') {
 			int losingScore = -(c->getNMoves() - c->NumberStartMoves());
-			if (losingScore < beta || gBeta == 100)
+			if (losingScore < beta /*|| gBeta == 100*/)
 				//__SM_32_ATOMIC_FUNCTIONS_H__::min(gBeta,losingScore);
 				atomicMin(&gBeta, losingScore);
 		}
 		if (isWinningMove && c->mLastmove.player == 'X')
 		{
 			int winningScore = (c->getNMoves() - c->NumberStartMoves());
-			if (winningScore > alpha || gAlpha == -100)
+			if (winningScore > alpha /*|| gAlpha == -100*/)
 				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,winningScore);
 				atomicMax(&gAlpha, winningScore);
 		}
@@ -263,7 +252,7 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 		if (c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
 		{
 			int drawScore = 0;
-			if (drawScore > alpha || gAlpha == -100)
+			if (drawScore > alpha /*|| gAlpha == -100*/)
 				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,drawScore);
 				atomicMax(&gAlpha, drawScore);
 		}
@@ -284,7 +273,8 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 
 		if (gAlpha >= gBeta)
 			return;
-		/*if (configuration->isFull()) {
+
+		if (configuration->isFull()) {
 			for (int i = 0; i < Configuration::ROWS; i++) {
 				for (int j = 0; j < Configuration::COLUMNS; j++) {
 					int idx = i*Configuration::COLUMNS + j;
@@ -292,19 +282,55 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 				}
 				printf("\n");
 			}
-		}*/
-		printf("%b", !configuration->isFull());
-		if (depth > 0 && !configuration->isFull()) {
-			MiniMax << <1, 7 >> > (c, depth - 1, alpha, beta);
 		}
+		
+
+		if (nextPlayer == 'X') {
+			if (depth > 0 && !configuration->isFull()) {
+				int score = alpha;
+				MiniMax << <1, 7 >> > (c, depth - 1, alpha, beta);
+				cudaDeviceSynchronize();
+				/*if (score < alpha) {
+					score = alpha;
+				}*/
+
+				if (score < gAlpha)
+					atomicMin(&gAlpha, score);
+				if (gBeta <= gAlpha) {
+					gScore = score;
+
+				}
+
+				printf("%d  ", gAlpha);
+			}
+		}
+
+		if (nextPlayer == '0') {
+			if (depth > 0 && !configuration->isFull()) {
+				int score = beta;
+				MiniMax << <1, 7 >> > (c, depth - 1, alpha, beta);
+				cudaDeviceSynchronize();
+				/*if (score > beta) {
+					score = beta;
+				}*/
+
+				if (score >= gBeta)
+					atomicMax(&gBeta, score);
+				if (gBeta <= gAlpha) {
+					gScore = score;
+				}
+
+				printf("%d  ", gBeta);
+			}
+		}
+
 	}
 }
 
 
-int main()
-{
+int main() {
 	string line;
-	double duration;
+	//double duration;
 	ifstream testFile("configurations.txt");
 	ofstream writeInFile;
 	writeInFile.open("benchmarker.txt");
@@ -322,22 +348,32 @@ int main()
 
 			cudaMalloc(&c->dev_board, sizeof(char)*Configuration::BOARD_SIZE);
 			cudaMemcpy(c->dev_board, c->board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);*/
-
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
-			MiniMax << <1, 7 >> > (dev_c,10,-100,100);
 
+			//BoardPrint << <1, 1 >> > (dev_c);
+			MiniMax << <1, 7 >> > (dev_c,10,-100,100);
 			cudaDeviceSynchronize();
 
-			printf("%d", gAlpha);
-			printf("%d", gBeta);
-			printf("   %d", gScore);
+			//cudaMemcpy(&alpha,&gAlpha,sizeof(int),cudaMemcpyDeviceToHost);
+			//cudaMemcpy(&beta, &gBeta, sizeof(int), cudaMemcpyDeviceToHost);
+			//cudaMemcpy(&score, &gScore, sizeof(int), cudaMemcpyDeviceToHost);
+			printf("Configuration N  %d \n", i);
+			printf("galpha %d \n", gAlpha);
+			printf("gbeta %d \n", gBeta);
+			printf("gscore %d \n", gScore);
+			printf("nodes %u \n", nodeCount);
+			printf("-----------------------------------\n");
 
-
+			free(c);
 			cudaFree(dev_c);
-			cudaDeviceReset();			
+			gAlpha = -100;
+			gBeta = 100;
+			gScore = 0;
+			nodeCount = 0;
+			cudaDeviceReset();		
 			i++;
-			if (i >0)
+			if (i >1)
 				break;
 		}
 	}
