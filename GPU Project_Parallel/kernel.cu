@@ -215,7 +215,7 @@ __global__ void BoardPrint(Configuration *c)
 	}
 }
 
-__global__ void MiniMax(Configuration* configuration, int depth, int alpha, int beta) {
+__global__ void MiniMax(Configuration* configuration, int depth) {
 	int thread = threadIdx.x;
 	atomicAdd(&nodeCount,1);
 	bool freeSpace = false;
@@ -225,7 +225,6 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 	for (int i = Configuration::ROWS - 1; i >= 0; i--) {
 		int idx = i*Configuration::COLUMNS + thread;
 		if (configuration->dev_board[idx] == '-') {
-			//printf("%d \n", configuration->getNMoves());
 			c = new Configuration(configuration->dev_board, lastMove(i, thread, nextPlayer, 0), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 			freeSpace = true;
 			break;
@@ -237,23 +236,20 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 		bool isWinningMove = c->isWinningMove();
 		if (isWinningMove && c->mLastmove.player == '0') {
 			int losingScore = -(c->getNMoves() - c->NumberStartMoves());
-			if (losingScore < beta /*|| gBeta == 100*/)
-				//__SM_32_ATOMIC_FUNCTIONS_H__::min(gBeta,losingScore);
+			if (losingScore < gBeta)
 				atomicMin(&gBeta, losingScore);
 		}
 		if (isWinningMove && c->mLastmove.player == 'X')
 		{
 			int winningScore = (c->getNMoves() - c->NumberStartMoves());
-			if (winningScore > alpha /*|| gAlpha == -100*/)
-				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,winningScore);
+			if (winningScore > gAlpha)
 				atomicMax(&gAlpha, winningScore);
 		}
 
 		if (c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
 		{
 			int drawScore = 0;
-			if (drawScore > alpha /*|| gAlpha == -100*/)
-				//__SM_32_ATOMIC_FUNCTIONS_H__::max(gAlpha,drawScore);
+			if (drawScore > gAlpha )
 				atomicMax(&gAlpha, drawScore);
 		}
 
@@ -272,18 +268,7 @@ __global__ void MiniMax(Configuration* configuration, int depth, int alpha, int 
 			atomicMin(&gBeta, beta);
 
 		if (gAlpha >= gBeta)
-			return;
-
-		if (configuration->isFull()) {
-			for (int i = 0; i < Configuration::ROWS; i++) {
-				for (int j = 0; j < Configuration::COLUMNS; j++) {
-					int idx = i*Configuration::COLUMNS + j;
-					printf("%c", c->dev_board[idx]);
-				}
-				printf("\n");
-			}
-		}
-		
+			return;		
 
 		if (nextPlayer == 'X') {
 			if (depth > 0 && !configuration->isFull()) {
