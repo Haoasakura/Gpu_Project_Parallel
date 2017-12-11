@@ -17,6 +17,7 @@ __device__ __managed__ int gAlpha=-100;
 __device__ __managed__ int gBeta=100;
 //__device__ __managed__ int gScore=0;
 __device__ __managed__ unsigned int nodeCount = 0;
+__device__ __managed__ int NUMBEROFCHILDREN = 7;
 
 struct lastMove {
 	int row; int column; char player; int value;
@@ -213,6 +214,7 @@ __device__ void rec() {
 		rec();
 	}
 }
+
 __global__ void BoardPrint(Configuration *c)
 {
 	rec();
@@ -321,6 +323,75 @@ __global__ void MiniMax(Configuration* configuration, int depth) {
 	}
 }
 
+__global__ void MinMax(Configuration* configuration, int depth,unsigned long numberOfNodes) {
+	unsigned long idx= blockDim.x * blockIdx.x + threadIdx.x;
+	if(idx==numberOfNodes)
+		printf("%lu ", idx);
+	if (idx < numberOfNodes) {
+		//printf("%lu ", idx);
+		unsigned long currentNode = idx;
+		//int* moves=new int[depth];
+		//moves = (int*)malloc(sizeof(int)*depth);
+		int i = 0;
+		while (currentNode>7) {
+			int parentNode = (int)currentNode / 7;
+			int move = currentNode % 7;
+			//moves[i++] = move;
+			/*if(idx==2400)
+				printf("%d ", move);*/
+			i++;
+			currentNode = parentNode;
+		}
+		//moves[i] = currentNode;
+		/*if(idx==2400)
+			printf("%d ", currentNode);*/
+		/*if (idx == 48) {
+			for (int i = depth-1; i >=0; i--) {
+				printf("%d ",moves[i]);
+			}
+			printf("\n");
+		}*/
+		//delete[] moves;
+		
+
+	}
+}
+int blockDimension(unsigned long numberbOfNodes) {
+	unsigned long attempt=1024;
+	int y = 1;
+	while (attempt<numberbOfNodes)
+	{
+		attempt += 1024;
+		y++;
+	}
+	return y;
+}
+int GenerateResult(Configuration* configuration, int depth) {
+	int i = 0;
+	gAlpha = -depth;
+	gBeta = depth;
+	for (; i < depth; i++)
+	{
+		int tAlpha = gAlpha;
+		unsigned long numberbOfNodes= std::pow(NUMBEROFCHILDREN, i);
+		if (i < 4) {
+			MinMax << <1, numberbOfNodes >> > (configuration, i,numberbOfNodes);
+		}
+		else {
+			
+			unsigned long nBlocks = blockDimension(numberbOfNodes);
+			//printf("%lu ",nBlocks);
+			MinMax << <nBlocks, 1024 >> > (configuration, i,numberbOfNodes);
+		}
+		printf("\n \n");
+		cudaDeviceSynchronize();
+		if (gAlpha > tAlpha) {
+			return tAlpha;
+		}
+	}
+
+	return gBeta;
+}
 
 int main() {
 	string line;
@@ -330,11 +401,12 @@ int main() {
 	writeInFile.open("benchmarker.txt");
 	/*size_t* s;
 	s = (size_t*)malloc(sizeof(size_t));
-	cudaDeviceSetLimit(cudaLimitStackSize,16384);
+	cudaDeviceSetLimit(cudaLimitPrintfFifoSize,16384);
 	cudaDeviceGetLimit(s,cudaLimitStackSize);*/
-	
-	if (testFile.is_open()) {
+	GenerateResult(nullptr, 12);
+	if (false && testFile.is_open()) {
 		
+
 		int i = 0;
 		while (getline(testFile, line)) {
 			Configuration *dev_c, *c;
@@ -350,9 +422,9 @@ int main() {
 			cudaMemcpy(c->dev_board, c->board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);*/
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
-
+			//GenerateResult(dev_c, 12);
 			//BoardPrint << <1, 1 >> > (dev_c);
-			MiniMax << <1, 7 >> > (dev_c,3);
+			//MiniMax << <1, 7 >> > (dev_c,3);
 			cudaDeviceSynchronize();
 
 			//cudaMemcpy(&alpha,&gAlpha,sizeof(int),cudaMemcpyDeviceToHost);
@@ -382,3 +454,4 @@ int main() {
 	system("pause");
     return 0;
 }
+
