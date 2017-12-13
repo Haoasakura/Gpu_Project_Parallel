@@ -17,35 +17,34 @@ __device__ __managed__ int gAlpha=-100;
 __device__ __managed__ int gBeta=100;
 //__device__ __managed__ int gScore=0;
 __device__ __managed__ unsigned int nodeCount = 0;
-__device__ __managed__ int NUMBEROFCHILDREN = 7;
+__device__ __managed__ __int8 NUMBEROFCHILDREN = 7;
 
 struct lastMove {
-	int row; int column; char player; int value;
+	__int8 row; __int8 column; char player;
 	__device__ __host__ lastMove() {}
-	__device__ __host__ lastMove(int _row, int _column, char _player, int _value) {
+	__device__ __host__ lastMove(__int8 _row, __int8 _column, char _player) {
 		row = _row;
 		column = _column;
 		player = _player;
-		value = _value;
 	}
 };
 
 class Configuration {
 public:
-	static const int ROWS = 6;  // width of the board
-	static const int COLUMNS = 7; // height of the board
-	static const int BOARD_SIZE = ROWS*COLUMNS;
-	static const int MIN_SCORE = -(ROWS*COLUMNS) / 2 + 3;
-	static const int MAX_SCORE = (ROWS*COLUMNS + 1) / 2 - 3;
+	static const __int8 ROWS = 6;  // width of the board
+	static const __int8 COLUMNS = 7; // height of the board
+	static const __int8 BOARD_SIZE = ROWS*COLUMNS;
+	static const __int8 MIN_SCORE = -(ROWS*COLUMNS) / 2 + 3;
+	static const __int8 MAX_SCORE = (ROWS*COLUMNS + 1) / 2 - 3;
 	
-	int numberOfConfigurations=0;
+	__int8 numberOfConfigurations=0;
 	char* board;
 	char* dev_board;
-	lastMove mLastmove = lastMove(-1, -1, 'n', 0);
+	lastMove mLastmove = lastMove(-1, -1, 'n');
 
 private:
-	int NumberOfMoves=0;
-	int NumberOfStartMoves=0;
+	__int8 NumberOfMoves=0;
+	__int8 NumberOfStartMoves=0;
 
 	
 
@@ -55,14 +54,14 @@ public:
 
 		board = (char*)malloc(sizeof(char)*Configuration::BOARD_SIZE);
 
-		for (int i = 0; i <boardConfiguration.length(); i++) {
+		for (__int8 i = 0; i <boardConfiguration.length(); i++) {
 			board[i] = boardConfiguration[i];
 		}
 
 		cudaMalloc(&dev_board, sizeof(char)*Configuration::BOARD_SIZE);
 		cudaMemcpy(dev_board, board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);
-
-		mLastmove = lastMove(-1, -1, '0', 0);
+		delete[] board;
+		mLastmove = lastMove(-1, -1, '0');
 		for each (char c in boardConfiguration)
 		{
 			if (c == 'X' || c == '0')
@@ -71,7 +70,7 @@ public:
 		NumberOfStartMoves = NumberOfMoves;
 	}
 
-	__device__  Configuration(char* _dev_board, lastMove _move, int numMoves, int startMoves, int numConfig) {
+	__device__  Configuration(char* _dev_board, lastMove _move, __int8 numMoves, __int8 startMoves, __int8 numConfig) {
 		mLastmove.row = _move.row;
 		mLastmove.column = _move.column;
 		mLastmove.player = _move.player;
@@ -86,10 +85,10 @@ public:
 
 	__device__ bool isFull() {
 
-		int idx = 0;
-		int counter = 0;
-		for (int j = 0; j < COLUMNS; j++) {
-			for (int i = ROWS - 1; i >= 0; i--) {
+		__int8 idx = 0;
+		__int8 counter = 0;
+		for (__int8 j = 0; j < COLUMNS; j++) {
+			for (__int8 i = ROWS - 1; i >= 0; i--) {
 				idx = i*COLUMNS + j;
 				if (dev_board[idx] == '-') {
 					counter++;
@@ -109,9 +108,9 @@ public:
 
 		if (mLastmove.row == -1)
 			return false;
-		int counter = 0;
+		__int8 counter = 0;
 		//check the column
-		for (int j = 0; j < COLUMNS; j++) {
+		for (__int8 j = 0; j < COLUMNS; j++) {
 			if (dev_board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
@@ -122,7 +121,7 @@ public:
 		}
 		counter = 0;
 		//check the row
-		for (int i = 0; i < ROWS; i++) {
+		for (__int8 i = 0; i < ROWS; i++) {
 			if (dev_board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
@@ -133,7 +132,7 @@ public:
 		}
 		counter = 0;
 		//check right diagonal
-		for (int k = 0; (k + mLastmove.row < ROWS && k + mLastmove.column < COLUMNS); k++) {
+		for (__int8 k = 0; (k + mLastmove.row < ROWS && k + mLastmove.column < COLUMNS); k++) {
 			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
@@ -143,7 +142,7 @@ public:
 				counter = 0;
 		}
 		counter = 0;
-		for (int k = 0; (mLastmove.row - k >= 0 && mLastmove.column - k >= 0); k++) {
+		for (__int8 k = 0; (mLastmove.row - k >= 0 && mLastmove.column - k >= 0); k++) {
 			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
@@ -154,7 +153,7 @@ public:
 		}
 		//check left diagonal
 		counter = 0;
-		for (int k = 0; (k + mLastmove.row < ROWS && mLastmove.column - k >= 0); k++) {
+		for (__int8 k = 0; (k + mLastmove.row < ROWS && mLastmove.column - k >= 0); k++) {
 			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
 				counter++;
 
@@ -165,7 +164,7 @@ public:
 				counter = 0;
 		}
 		counter = 0;
-		for (int k = 0; (mLastmove.row - k >= 0 && k + mLastmove.column < COLUMNS); k++) {
+		for (__int8 k = 0; (mLastmove.row - k >= 0 && k + mLastmove.column < COLUMNS); k++) {
 			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
 				counter++;
 
@@ -179,24 +178,24 @@ public:
 	}
 
 	__device__ __host__ void PrintBoard() {
-		for (int i = 0; i < Configuration::ROWS; i++) {
-			for (int j = 0; j < Configuration::COLUMNS; j++) {
-				int idx = i*Configuration::COLUMNS + j;
+		for (__int8 i = 0; i < Configuration::ROWS; i++) {
+			for (__int8 j = 0; j < Configuration::COLUMNS; j++) {
+				__int8 idx = i*Configuration::COLUMNS + j;
 				printf("%c", board[idx]);
 			}
 			printf("\n");
 		}
 	}
 
-	__device__ int getNMoves() {
+	__device__ __int8 getNMoves() {
 		return NumberOfMoves;
 	}
 
-	__device__ void setNMoves(int moves) {
+	__device__ void setNMoves(__int8 moves) {
 		NumberOfMoves = moves;
 	}
 
-	__device__ int NumberStartMoves()
+	__device__ __int8 NumberStartMoves()
 	{
 		return NumberOfStartMoves;
 	}
@@ -205,9 +204,9 @@ public:
 	}
 };
 __device__ void BoardPrint(Configuration *c) {
-	for (int i = 0; i < Configuration::ROWS; i++) {
-		for (int j = 0; j < Configuration::COLUMNS; j++) {
-			int idx = i*Configuration::COLUMNS + j;
+	for (__int8 i = 0; i < Configuration::ROWS; i++) {
+		for (__int8 j = 0; j < Configuration::COLUMNS; j++) {
+			__int8 idx = i*Configuration::COLUMNS + j;
 			printf("%c", c->dev_board[idx]);
 		}
 		printf("\n");
@@ -224,7 +223,7 @@ __global__ void MiniMax(Configuration* configuration, int depth) {
 	for (int i = Configuration::ROWS - 1; i >= 0; i--) {
 		int idx = i*Configuration::COLUMNS + thread;
 		if (configuration->dev_board[idx] == '-') {
-			c = new Configuration(configuration->dev_board, lastMove(i, thread, nextPlayer, 0), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+			c = new Configuration(configuration->dev_board, lastMove(i, thread, nextPlayer), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 			freeSpace = true;
 			break;
 		}
@@ -309,38 +308,47 @@ __global__ void MiniMax(Configuration* configuration, int depth) {
 	}
 }
 
-__global__ void MinMax(Configuration* configuration, int depth,unsigned long numberOfNodes) {
+__global__ void MinMax(Configuration* configuration, __int8 depth,unsigned long numberOfNodes) {
 	unsigned long idx= blockDim.x * blockIdx.x + threadIdx.x;
 
 	if (idx < numberOfNodes) {
 		//printf("%lu ", idx);
-		Configuration* c = (Configuration*)malloc(sizeof(Configuration));
-		c = new Configuration(configuration->dev_board, configuration->mLastmove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 
 		unsigned long currentNode = idx;
-		int* moves;
-		moves = (int*)malloc(sizeof(int)*depth);
-		int i = 0;
+		__int8* moves;
+		moves = (__int8*)malloc(sizeof(__int8)*depth);
+		__int8 i = 0;
 		while (currentNode>7) {
-			int parentNode = (int)currentNode / 7;	
-			int move = currentNode % 7;
+			unsigned long parentNode = (int)currentNode / 7;	
+			__int8 move = currentNode % 7;
 			moves[i++] = move;
 			i++;
 			currentNode = parentNode;
 		}
-		moves[i] = currentNode;
+		moves[i] = (__int8)currentNode;
 
-		for (int m = depth-1; m>=0; m--) {
-			for (int i = Configuration::ROWS - 1; i >= 0; i--) {
-				int ix = i*Configuration::COLUMNS + moves[m];
-				if (c->dev_board[ix] == '-') {
-					c->dev_board[ix] = m % 2 == 0 ? 'X' : '0';
-					if (m == 0)
-						c->mLastmove = lastMove(i, moves[m], m % 2 == 0 ? 'X' : '0', 0);
+		for (__int8 m = depth - 1; m >= 0; m--) {
+			for (__int8 i = Configuration::ROWS - 1; i >= 0; i--) {
+				__int8 ix = i*Configuration::COLUMNS + moves[m];
+				if (configuration->dev_board[ix] == '-') {
 					break;
 				}
 				if (i == 0) {
 					return;
+				}
+			}
+		}
+		Configuration* c = (Configuration*)malloc(sizeof(Configuration));
+		c = new Configuration(configuration->dev_board, configuration->mLastmove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+
+		for (__int8 m = depth-1; m>=0; m--) {
+			for (__int8 i = Configuration::ROWS - 1; i >= 0; i--) {
+				__int8 ix = i*Configuration::COLUMNS + moves[m];
+				if (c->dev_board[ix] == '-') {
+					c->dev_board[ix] = m % 2 == 0 ? 'X' : '0';
+					if (m == 0)
+						c->mLastmove = lastMove(i, moves[m], m % 2 == 0 ? 'X' : '0');
+					break;
 				}
 			}
 		}
@@ -353,9 +361,9 @@ __global__ void MinMax(Configuration* configuration, int depth,unsigned long num
 
 	}
 }
-int blockDimension(unsigned long numberbOfNodes) {
+__int8 blockDimension(unsigned long numberbOfNodes) {
 	unsigned long attempt=1024;
-	int y = 1;
+	__int8 y = 1;
 	while (attempt<numberbOfNodes)
 	{
 		attempt += 1024;
@@ -363,13 +371,13 @@ int blockDimension(unsigned long numberbOfNodes) {
 	}
 	return y;
 }
-int GenerateResult(Configuration* configuration, int depth) {
-	int i = 0;
+__int8 GenerateResult(Configuration* configuration, int depth) {
+	__int8 i = 0;
 	gAlpha = -depth;
 	gBeta = depth;
 	for (; i < depth; i++)
 	{
-		int tAlpha = gAlpha;
+		__int8 tAlpha = gAlpha;
 		unsigned long numberbOfNodes= std::pow(NUMBEROFCHILDREN, i);
 		if (i < 4) {
 			MinMax << <1, numberbOfNodes >> > (configuration, i,numberbOfNodes);
@@ -404,7 +412,7 @@ int main() {
 	if (testFile.is_open()) {
 		
 
-		int i = 0;
+		__int8 i = 0;
 		while (getline(testFile, line)) {
 			Configuration *dev_c, *c;
 			c = (Configuration*)malloc(sizeof(Configuration));
@@ -419,7 +427,7 @@ int main() {
 			cudaMemcpy(c->dev_board, c->board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);*/
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
-			GenerateResult(dev_c, 3);
+			GenerateResult(dev_c, 7);
 			//BoardPrint << <1, 1 >> > (dev_c);
 			//MiniMax << <1, 7 >> > (dev_c,3);
 			cudaDeviceSynchronize();
