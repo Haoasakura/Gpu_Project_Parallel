@@ -204,28 +204,14 @@ public:
 	__device__ __host__ ~Configuration() {
 	}
 };
-__device__ void rec() {
-	atomicAdd(&nodeCount, 1);
-
-	if (nodeCount<10000)
-	{
-
-		printf("%d ", nodeCount);
-		rec();
-	}
-}
-
-__global__ void BoardPrint(Configuration *c)
-{
-	rec();
-	
-	/*for (int i = 0; i < Configuration::ROWS; i++) {
+__device__ void BoardPrint(Configuration *c) {
+	for (int i = 0; i < Configuration::ROWS; i++) {
 		for (int j = 0; j < Configuration::COLUMNS; j++) {
 			int idx = i*Configuration::COLUMNS + j;
 			printf("%c", c->dev_board[idx]);
 		}
 		printf("\n");
-	}*/
+	}
 }
 
 __global__ void MiniMax(Configuration* configuration, int depth) {
@@ -325,33 +311,44 @@ __global__ void MiniMax(Configuration* configuration, int depth) {
 
 __global__ void MinMax(Configuration* configuration, int depth,unsigned long numberOfNodes) {
 	unsigned long idx= blockDim.x * blockIdx.x + threadIdx.x;
-	if(idx==numberOfNodes)
-		printf("%lu ", idx);
+
 	if (idx < numberOfNodes) {
 		//printf("%lu ", idx);
+		Configuration* c = (Configuration*)malloc(sizeof(Configuration));
+		c = new Configuration(configuration->dev_board, configuration->mLastmove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+
 		unsigned long currentNode = idx;
-		//int* moves=new int[depth];
-		//moves = (int*)malloc(sizeof(int)*depth);
+		int* moves;
+		moves = (int*)malloc(sizeof(int)*depth);
 		int i = 0;
 		while (currentNode>7) {
-			int parentNode = (int)currentNode / 7;
+			int parentNode = (int)currentNode / 7;	
 			int move = currentNode % 7;
-			//moves[i++] = move;
-			/*if(idx==2400)
-				printf("%d ", move);*/
+			moves[i++] = move;
 			i++;
 			currentNode = parentNode;
 		}
-		//moves[i] = currentNode;
-		/*if(idx==2400)
-			printf("%d ", currentNode);*/
-		/*if (idx == 48) {
-			for (int i = depth-1; i >=0; i--) {
-				printf("%d ",moves[i]);
+		moves[i] = currentNode;
+
+		for (int m = depth-1; m>=0; m--) {
+			for (int i = Configuration::ROWS - 1; i >= 0; i--) {
+				int ix = i*Configuration::COLUMNS + moves[m];
+				if (c->dev_board[ix] == '-') {
+					c->dev_board[ix] = m % 2 == 0 ? 'X' : '0';
+					if (m == 0)
+						c->mLastmove = lastMove(i, moves[m], m % 2 == 0 ? 'X' : '0', 0);
+					break;
+				}
+				if (i == 0) {
+					return;
+				}
 			}
-			printf("\n");
-		}*/
-		//delete[] moves;
+		}
+		if(idx==numberOfNodes-1)
+			BoardPrint(c);
+
+		delete c;
+		delete[] moves;
 		
 
 	}
@@ -403,8 +400,8 @@ int main() {
 	s = (size_t*)malloc(sizeof(size_t));
 	cudaDeviceSetLimit(cudaLimitPrintfFifoSize,16384);
 	cudaDeviceGetLimit(s,cudaLimitStackSize);*/
-	GenerateResult(nullptr, 12);
-	if (false && testFile.is_open()) {
+	//GenerateResult(nullptr, 2);
+	if (testFile.is_open()) {
 		
 
 		int i = 0;
@@ -422,7 +419,7 @@ int main() {
 			cudaMemcpy(c->dev_board, c->board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);*/
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
-			//GenerateResult(dev_c, 12);
+			GenerateResult(dev_c, 3);
 			//BoardPrint << <1, 1 >> > (dev_c);
 			//MiniMax << <1, 7 >> > (dev_c,3);
 			cudaDeviceSynchronize();
