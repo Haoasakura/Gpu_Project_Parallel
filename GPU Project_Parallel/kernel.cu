@@ -13,19 +13,19 @@
 
 using namespace std;
 
-__device__ __managed__ int gAlpha=-100;
-__device__ __managed__ int gBeta=100;
-//__device__ __managed__ int gScore=0;
+__device__ __managed__ int gAlpha;
+__device__ __managed__ int gBeta;
 __device__ __managed__ unsigned int nodeCount = 0;
 __device__ __managed__ __int8 NUMBEROFCHILDREN = 7;
 
 struct lastMove {
-	__int8 row; __int8 column; char player;
+	__int8 row; __int8 column; char player; __int8 value;
 	__device__ __host__ lastMove() {}
-	__device__ __host__ lastMove(__int8 _row, __int8 _column, char _player) {
+	__device__ __host__ lastMove(__int8 _row, __int8 _column, char _player,__int8 _value) {
 		row = _row;
 		column = _column;
 		player = _player;
+		value = _value;
 	}
 };
 
@@ -40,7 +40,7 @@ public:
 	__int8 numberOfConfigurations=0;
 	char* board;
 	char* dev_board;
-	lastMove mLastmove = lastMove(-1, -1, 'n');
+	lastMove mLastmove = lastMove(-1, -1, 'n',0);
 
 private:
 	__int8 NumberOfMoves=0;
@@ -60,8 +60,10 @@ public:
 
 		cudaMalloc(&dev_board, sizeof(char)*Configuration::BOARD_SIZE);
 		cudaMemcpy(dev_board, board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);
+		PrintBoard();
+		printf("\n");
 		delete[] board;
-		mLastmove = lastMove(-1, -1, '0');
+		mLastmove = lastMove(-1, -1, '0',0);
 		for each (char c in boardConfiguration)
 		{
 			if (c == 'X' || c == '0')
@@ -69,7 +71,21 @@ public:
 		}
 		NumberOfStartMoves = NumberOfMoves;
 	}
+	__host__ Configuration::Configuration(char* _board, lastMove _move, int numMoves, int startMoves) {
+		_board[_move.row*COLUMNS + _move.column] = _move.player;
+		mLastmove.row = _move.row;
+		mLastmove.column = _move.column;
+		mLastmove.player = _move.player;
+		NumberOfStartMoves = startMoves;
+		NumberOfMoves = numMoves + 1;
+		board = new char[ROWS*COLUMNS];
+		for (int i = 0; i < ROWS*COLUMNS; i++) {
+			board[i] = _board[i];
+		}
 
+		cudaMalloc(&dev_board, sizeof(char)*Configuration::BOARD_SIZE);
+		cudaMemcpy(dev_board, board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);
+	}
 	__device__  Configuration(char* _dev_board, lastMove _move, __int8 numMoves, __int8 startMoves, __int8 numConfig) {
 		mLastmove.row = _move.row;
 		mLastmove.column = _move.column;
@@ -108,10 +124,11 @@ public:
 
 		if (mLastmove.row == -1)
 			return false;
-		__int8 counter = 0;
+		int counter = 0;
+
 		//check the column
-		for (__int8 j = 0; j < COLUMNS; j++) {
-			if (dev_board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
+		for (int j = 0; j < COLUMNS; j++) {
+			if (board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
 					return true;
@@ -121,8 +138,8 @@ public:
 		}
 		counter = 0;
 		//check the row
-		for (__int8 i = 0; i < ROWS; i++) {
-			if (dev_board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
+		for (int i = 0; i < ROWS; i++) {
+			if (board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
 				counter++;
 				if (counter >= 4)
 					return true;
@@ -132,49 +149,53 @@ public:
 		}
 		counter = 0;
 		//check right diagonal
-		for (__int8 k = 0; (k + mLastmove.row < ROWS && k + mLastmove.column < COLUMNS); k++) {
-			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
-				counter++;
-				if (counter >= 4)
-					return true;
-			}
-			else
-				counter = 0;
+		int ki = mLastmove.row;
+		int ky = mLastmove.column;
+		for (; (ki > 0 && ky > 0); ki--, ky--) {
 		}
-		counter = 0;
-		for (__int8 k = 0; (mLastmove.row - k >= 0 && mLastmove.column - k >= 0); k++) {
-			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
-				counter++;
-				if (counter >= 4)
-					return true;
+		if (!(ki >= 3 || ky >= 3)) {
+			for (int k = 0; (ki + k < ROWS && ky + k < COLUMNS); k++) {
+				if (board[(ki + k)*COLUMNS + (ky + k)] == mLastmove.player) {
+					counter++;
+					if (counter >= 4) {
+						return true;
+					}
+				}
+				else {
+					counter = 0;
+				}
 			}
-			else
-				counter = 0;
 		}
+
 		//check left diagonal
 		counter = 0;
-		for (__int8 k = 0; (k + mLastmove.row < ROWS && mLastmove.column - k >= 0); k++) {
-			if (dev_board[(mLastmove.row + k)*COLUMNS + (mLastmove.column - k)] == mLastmove.player) {
-				counter++;
-
-				if (counter >= 4)
-					return true;
-			}
-			else
-				counter = 0;
+		ki = mLastmove.row;
+		ky = mLastmove.column;
+		for (; (ki < ROWS - 1 && ky > 0); ki++, ky--) {
 		}
-		counter = 0;
-		for (__int8 k = 0; (mLastmove.row - k >= 0 && k + mLastmove.column < COLUMNS); k++) {
-			if (dev_board[(mLastmove.row - k)*COLUMNS + (mLastmove.column + k)] == mLastmove.player) {
-				counter++;
-
-				if (counter >= 4)
-					return true;
+		if (!(ki < 3 || ky > 3)) {
+			for (int k = 0; (ki - k >= 0 && ky + k < COLUMNS); k++) {
+				if (board[(ki - k)*COLUMNS + (ky + k)] == mLastmove.player) {
+					counter++;
+					if (counter >= 4) {
+						return true;
+					}
+				}
+				else {
+					counter = 0;
+				}
 			}
-			else
-				counter = 0;
 		}
 		return false;
+	}
+	
+	char* Configuration::getBoard() {
+		char * _board = new char[ROWS*COLUMNS];
+
+		for (int i = 0; i < ROWS*COLUMNS; i++) {
+			_board[i] = board[i];
+		}
+		return _board;
 	}
 
 	__device__ __host__ void PrintBoard() {
@@ -187,15 +208,272 @@ public:
 		}
 	}
 
-	__device__ __int8 getNMoves() {
+
+	int Configuration::ValutateMove(lastMove mLastmove, int pawnInARow) {
+		int value = 0;
+		int _value = 0;
+		bool yourMove = false;
+		if (mLastmove.row == -1)
+			return value;
+
+		int counter = 0;
+		//check the rows
+		for (int j = 0; j < COLUMNS; j++) {
+			if (board[mLastmove.row*COLUMNS + j] == mLastmove.player) {
+				counter++;
+				if (j == mLastmove.column) {
+					yourMove = true;
+				}
+				if (counter >= pawnInARow && yourMove) {
+					if (counter == 4) {
+						_value = counter + 5;
+						break;
+					}
+					_value = counter;
+				}
+			}
+			else {
+				counter = 0;
+				yourMove = false;
+			}
+		}
+		value += _value;
+		_value = 0;
+		counter = 0;
+		//check the columns
+		for (int i = mLastmove.row; i < ROWS; i++) {
+			if (board[i*COLUMNS + mLastmove.column] == mLastmove.player) {
+				counter++;
+
+				if (counter >= pawnInARow) {
+					if (counter == 4) {
+						_value = counter + 5;
+						break;
+					}
+					_value = counter;
+				}
+			}
+			else
+				break;
+		}
+
+		value += _value;
+		_value = 0;
+		//value += (mLastmove.row<4)?mLastmove.row:3;
+		counter = 0;
+		yourMove = false;
+		//check right diagonal
+		int ki = mLastmove.row;
+		int ky = mLastmove.column;
+		for (; (ki > 0 && ky > 0); ki--, ky--) {
+		}
+		if (!(ki >= 3 || ky >= 3)) {
+			for (int k = 0; (ki + k < ROWS && ky + k < COLUMNS); k++) {
+				if (board[(ki + k)*COLUMNS + (ky + k)] == mLastmove.player) {
+					counter++;
+					if ((ki + k) == mLastmove.row && (ky + k) == mLastmove.column) {
+						yourMove = true;
+					}
+					if (counter >= pawnInARow && yourMove) {
+						if (counter == 4) {
+							_value = counter + 5;
+							break;
+						}
+						_value = counter;
+					}
+				}
+				else {
+					counter = 0;
+					yourMove = false;
+				}
+			}
+		}
+		value += _value;
+		_value = 0;
+		counter = 0;
+		yourMove = false;
+		//check left diagonal
+		ki = mLastmove.row;
+		ky = mLastmove.column;
+		for (; (ki < ROWS - 1 && ky > 0); ki++, ky--) {
+		}
+		if (!(ki < 3 || ky > 3)) {
+			for (int k = 0; (ki - k >= 0 && ky + k < COLUMNS); k++) {
+				if (board[(ki - k)*COLUMNS + (ky + k)] == mLastmove.player) {
+					counter++;
+					if ((ki - k) == mLastmove.row && (ky + k) == mLastmove.column) {
+						yourMove = true;
+					}
+					if (counter >= pawnInARow && yourMove) {
+						if (counter == 4) {
+							_value = counter + 5;
+							break;
+						}
+						_value = counter;
+					}
+				}
+				else {
+					counter = 0;
+					yourMove = false;
+				}
+			}
+		}
+		value += _value;
+
+		return value;
+	}
+
+	int Configuration::ValutateEnemyPositions(lastMove mLastmove, int pawnInARow) {
+		int value = 0;
+		if (mLastmove.row == -1)
+			return value;
+
+		int counter = 0;
+		bool blocked = false;
+		//check the rows
+		for (int j = 0; j < COLUMNS; j++) {
+			if ((board[mLastmove.row*COLUMNS + j] != mLastmove.player && board[mLastmove.row*COLUMNS + j] != '-') || j == mLastmove.column) {
+				counter++;
+				if (j == mLastmove.column)
+					blocked = true;
+				if (counter >= pawnInARow) {
+					if (blocked) {
+						value += pawnInARow + 3;
+						break;
+					}
+				}
+			}
+			else
+				counter = 0;
+		}
+
+		//check the Columns
+		counter = 0;
+		blocked = false;
+		for (int i = 0; i < ROWS; i++) {
+			if ((board[i*COLUMNS + mLastmove.column] != mLastmove.player && board[i*COLUMNS + mLastmove.column] != '-') || i == mLastmove.row) {
+				counter++;
+				if (i == mLastmove.row)
+					blocked = true;
+				if (counter >= pawnInARow) {
+					if (blocked) {
+						value += pawnInARow + 3;
+						break;
+					}
+				}
+			}
+			else
+				counter = 0;
+		}
+
+		//check right diagonal
+		int ki = mLastmove.row;
+		int ky = mLastmove.column;
+		counter = 0;
+		blocked = false;
+		for (; (ki > 0 && ky > 0); ki--, ky--) {
+		}
+		if (!(ki >= 3 || ky >= 3)) {
+			for (int k = 0; (ki + k < ROWS && ky + k < COLUMNS); k++) {
+				if ((board[(ki + k)*COLUMNS + (ky + k)] != mLastmove.player && board[(ki + k)*COLUMNS + (ky + k)] != '-') || ((ki + k) == mLastmove.row && (ky + k) == mLastmove.column)) {
+					counter++;
+					if ((ki + k) == mLastmove.row && (ky + k) == mLastmove.column)
+						blocked = true;
+					if (counter >= pawnInARow) {
+						if (blocked) {
+							value += pawnInARow + 3;
+							break;
+						}
+					}
+				}
+				else
+					counter = 0;
+			}
+		}
+
+		//check left diagonal
+		counter = 0;
+		blocked = false;
+		ki = mLastmove.row;
+		ky = mLastmove.column;
+		for (; (ki < ROWS - 1 && ky > 0); ki++, ky--) {
+		}
+		if (!(ki < 3 || ky > 3)) {
+			for (int k = 0; (ki - k >= 0 && ky + k < COLUMNS); k++) {
+				if ((board[(ki - k)*COLUMNS + (ky + k)] != mLastmove.player && board[(ki - k)*COLUMNS + (ky + k)] != '-') || ((ki - k) == mLastmove.row && (ky + k) == mLastmove.column)) {
+					counter++;
+					if ((ki - k) == mLastmove.row && (ky + k) == mLastmove.column)
+						blocked = true;
+					if (counter >= pawnInARow) {
+						if (blocked) {
+							value += pawnInARow + 3;
+							break;
+						}
+					}
+				}
+				else
+					counter = 0;
+			}
+		}
+
+		return value;
+	}
+	//genera le sette mosse successive
+	vector<lastMove> Configuration::GenerateNextMoves(char player) {
+
+		vector<lastMove> moves = vector<lastMove>();
+		int idx = 0;
+		for (int j = 0; j < COLUMNS; j++) {
+			for (int i = ROWS - 1; i >= 0; i--) {
+				idx = i*COLUMNS + j;
+				if (board[idx] == '-') {
+					moves.push_back(lastMove(i, j, player, 0));
+					break;
+				}
+			}
+		}
+		return SortNextMoves(moves);
+	}
+
+	vector<lastMove> Configuration::SortNextMoves(vector<lastMove> moves) {
+		bool bDone = false;
+
+		for (int i = 0; i < moves.size(); i++) {
+			lastMove tmp = moves[i];
+			moves[i] = moves[moves.size() / 2 + (1 - 2 * (i % 2))*(i + 1) / 2];
+			moves[moves.size() / 2 + (1 - 2 * (i % 2))*(i + 1) / 2] = tmp;
+		}
+
+
+		for (int i = 0; i < moves.size(); ++i) {
+			board[moves[i].row*COLUMNS + moves[i].column] = moves[i].player;
+			moves[i].value = ValutateMove(moves[i], 2) + ValutateEnemyPositions(moves[i], 4);
+			board[moves[i].row*COLUMNS + moves[i].column] = '-';
+		}
+
+		while (!bDone) {
+			bDone = true;
+			for (int i = 0; i < moves.size() - 1; ++i) {
+				if (moves[i].value < moves[i + 1].value) {
+					lastMove tmp = moves[i];
+					moves[i] = moves[i + 1];
+					moves[i + 1] = tmp;
+					bDone = false;
+				}
+			}
+		}
+		return moves;
+	}
+
+	__device__ __host__ __int8 getNMoves() {
 		return NumberOfMoves;
 	}
 
-	__device__ void setNMoves(__int8 moves) {
+	__device__ __host__ void setNMoves(__int8 moves) {
 		NumberOfMoves = moves;
 	}
 
-	__device__ __int8 NumberStartMoves()
+	__device__ __host__ __int8 NumberStartMoves()
 	{
 		return NumberOfStartMoves;
 	}
@@ -213,107 +491,68 @@ __device__ void BoardPrint(Configuration *c) {
 	}
 }
 
-__global__ void MiniMax(Configuration* configuration, int depth) {
-	int thread = threadIdx.x;
-	atomicAdd(&nodeCount,1);
-	bool freeSpace = false;
-	Configuration* c;
-	c = (Configuration*)malloc(sizeof(Configuration));
+int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
+	nodeCount++;
+	bool isWinningMove = configuration->isWinningMove();
+	if ((isWinningMove && configuration->mLastmove.player == '0') || depth == 0) {
+		return -(configuration->getNMoves() - configuration->NumberStartMoves());
+	}
+
+	if ((isWinningMove && configuration->mLastmove.player == 'X') || depth == 0) {
+		return (configuration->getNMoves() - configuration->NumberStartMoves());
+	}
+
+	if (configuration->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
+		return 0;
+
 	char nextPlayer = configuration->mLastmove.player == 'X' ? '0' : 'X';
-	for (int i = Configuration::ROWS - 1; i >= 0; i--) {
-		int idx = i*Configuration::COLUMNS + thread;
-		if (configuration->dev_board[idx] == '-') {
-			c = new Configuration(configuration->dev_board, lastMove(i, thread, nextPlayer), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
-			freeSpace = true;
-			break;
-		}
-	}
+	vector<lastMove> moves = configuration->GenerateNextMoves(nextPlayer);
+	
+	int* score; int* dev_score;
+	score= (int*)malloc(sizeof(int));
+	cudaMalloc(&dev_score, sizeof(int));
+	
+		Configuration* c = (Configuration*)malloc(sizeof(Configuration));
 
-	if (freeSpace && thread < 7) {
+			c = new Configuration(configuration->getBoard(), moves[0], configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 
-		bool isWinningMove = c->isWinningMove();
-		if (isWinningMove && c->mLastmove.player == '0') {
-			int losingScore = -(c->getNMoves() - c->NumberStartMoves());
-			if (losingScore < gBeta) {
-				atomicMin(&gBeta, losingScore);
-				return;
+			*score = -Pv_Split(c, depth - 1, -beta, -alpha);
+			cudaMemcpy(dev_score, score, sizeof(int), cudaMemcpyHostToDevice);
+
+			Configuration* dev_c;
+			c = new Configuration(configuration->dev_board, moves[0], configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+			cudaMalloc(&dev_c, sizeof(Configuration));
+			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
+			<< < >> > ();
+			cudaDeviceSynchronize();
+			cudaMemcpy(score, dev_score, sizeof(int), cudaMemcpyDeviceToHost);
+			//da mettere nel kernel
+			//score = -Pvs(dev_c, depth - 1, (-alpha - 1), -alpha);
+
+			if (alpha < *score < beta) {
+				<< < >> > ();
+				cudaDeviceSynchronize();
+				cudaMemcpy(score, dev_score, sizeof(int), cudaMemcpyDeviceToHost);
+				//score = -Pvs(dev_c, depth - 1, -beta, -score);
 			}
+				
+		alpha = max(alpha, *score);
+		if (alpha >= beta) {
+			delete c;
+			return alpha;
 		}
-		if (isWinningMove && c->mLastmove.player == 'X')
-		{
-			int winningScore = (c->getNMoves() - c->NumberStartMoves());
-			if (winningScore > gAlpha) {
-				atomicMax(&gAlpha, winningScore);
-				return;
-			}
-		}
+		delete c;
 
-		if (c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
-		{
-			int drawScore = 0;
-			if (drawScore > gAlpha) {
-				atomicMax(&gAlpha, drawScore);
-				return;
-			}
-		}
+	moves.clear();
+	moves.shrink_to_fit();
 
-		int max = (c->getNMoves() - c->NumberStartMoves());
-		if (gAlpha <= max && gAlpha > 0)
-			return;
-
-		//if (gAlpha >= gBeta)
-		//	return;	
-
-		if (depth > 0 && !configuration->isFull()) {
-			MiniMax << <1, 7 >> > (c, depth - 1);
-			//cudaDeviceSynchronize();
-		}
-
-		/*if (nextPlayer == 'X') {
-			if (depth > 0 && !configuration->isFull()) {
-				MiniMax << <1, 7 >> > (c, depth - 1);
-				/*if (score < alpha) {
-					score = alpha;
-				}*/
-
-				/*if (score < gAlpha)
-					atomicMin(&gAlpha, score);
-				if (gBeta <= gAlpha) {
-					gScore = score;
-
-				}
-
-				printf("%d  ", gAlpha);
-			}
-		}
-
-		if (nextPlayer == '0') {
-			if (depth > 0 && !configuration->isFull()) {
-				MiniMax << <1, 7 >> > (c, depth - 1);
-				//cudaDeviceSynchronize();
-				/*if (score > beta) {
-					score = beta;
-				}*/
-
-				/*if (score >= gBeta)
-					atomicMax(&gBeta, score);
-				if (gBeta <= gAlpha) {
-					gScore = score;
-				}
-
-				printf("%d  ", gBeta);
-			}
-		}*/
-
-	}
+	return alpha;
 }
 
 __global__ void MinMax(Configuration* configuration, __int8 depth,unsigned long numberOfNodes) {
 	unsigned long idx= blockDim.x * blockIdx.x + threadIdx.x;
 
 	if (idx < numberOfNodes) {
-		//printf("%lu ", idx);
-
 		unsigned long currentNode = idx;
 		__int8* moves;
 		moves = (__int8*)malloc(sizeof(__int8)*depth);
@@ -345,15 +584,46 @@ __global__ void MinMax(Configuration* configuration, __int8 depth,unsigned long 
 			for (__int8 i = Configuration::ROWS - 1; i >= 0; i--) {
 				__int8 ix = i*Configuration::COLUMNS + moves[m];
 				if (c->dev_board[ix] == '-') {
-					c->dev_board[ix] = m % 2 == 0 ? 'X' : '0';
+					c->dev_board[ix] = depth % 2 == 0 ? '0' : 'X';
 					if (m == 0)
-						c->mLastmove = lastMove(i, moves[m], m % 2 == 0 ? 'X' : '0');
+						c->mLastmove = lastMove(i, moves[m], depth % 2 == 0 ? '0' : 'X');
 					break;
 				}
 			}
 		}
-		if(idx==numberOfNodes-1)
-			BoardPrint(c);
+
+		bool isWinningMove = c->isWinningMove();
+		if (isWinningMove && c->mLastmove.player == '0') {
+			int losingScore = -depth;
+			if (losingScore < gBeta) {
+				//BoardPrint(c);
+				atomicMin(&gBeta, losingScore);
+				return;
+			}
+		}
+		if (isWinningMove && c->mLastmove.player == 'X')
+		{
+			int winningScore = depth;
+			if (winningScore > gAlpha) {
+				atomicMax(&gAlpha, winningScore);
+				//BoardPrint(c);
+				return;
+			}
+		}
+
+		if (c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
+		{
+			int drawScore = 0;
+			if (drawScore > gAlpha) {
+				atomicMax(&gAlpha, drawScore);
+				return;
+			}
+		}
+
+		int max = depth;
+		if (gAlpha <= max && gBeta >= max) {
+			return;
+		}
 
 		delete c;
 		delete[] moves;
@@ -388,10 +658,9 @@ __int8 GenerateResult(Configuration* configuration, int depth) {
 			//printf("%lu ",nBlocks);
 			MinMax << <nBlocks, 1024 >> > (configuration, i,numberbOfNodes);
 		}
-		printf("\n \n");
 		cudaDeviceSynchronize();
 		if (gAlpha > tAlpha) {
-			return tAlpha;
+			return gAlpha;
 		}
 	}
 
@@ -427,8 +696,8 @@ int main() {
 			cudaMemcpy(c->dev_board, c->board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);*/
 			cudaMalloc(&dev_c, sizeof(Configuration));
 			cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
-			GenerateResult(dev_c, 7);
-			//BoardPrint << <1, 1 >> > (dev_c);
+			int r=GenerateResult(dev_c, 7);
+			
 			//MiniMax << <1, 7 >> > (dev_c,3);
 			cudaDeviceSynchronize();
 
@@ -438,7 +707,7 @@ int main() {
 			printf("Configuration N  %d \n", i);
 			printf("galpha %d \n", gAlpha);
 			printf("gbeta %d \n", gBeta);
-			//printf("gscore %d \n", gScore);
+			printf("Result %d \n", r);
 			printf("nodes %u \n", nodeCount);
 			printf("-----------------------------------\n");
 			
@@ -446,11 +715,10 @@ int main() {
 			cudaFree(dev_c);
 			gAlpha = -100;
 			gBeta = 100;
-			//gScore = 0;
 			nodeCount = 0;
 			cudaDeviceReset();
 			i++;
-			if (i >0)
+			if (i >1)
 				break;
 		}
 	}
