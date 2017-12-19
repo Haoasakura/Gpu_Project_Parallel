@@ -894,13 +894,13 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 
 		bool isWinningMove = configuration->dev_isWinningMove();
 		if ((isWinningMove && configuration->mLastmove.player == '0') || depth == 0) {
-			int t_score = (configuration->getNMoves() - configuration->NumberStartMoves());
+			int t_score = -(configuration->getNMoves() - configuration->NumberStartMoves());
 			atomicMax(score, t_score);
 			return;
 		}
 
 		if ((isWinningMove && configuration->mLastmove.player == 'X') || depth == 0) {
-			int t_score = -(configuration->getNMoves() - configuration->NumberStartMoves());
+			int t_score = (configuration->getNMoves() - configuration->NumberStartMoves());
 			atomicMax(score, t_score);
 			return;
 		}
@@ -1004,14 +1004,13 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 	Pv_Split_Init<<<1, 7>>>(dev_c,(depth-1), firstMove.column,(-alpha-1),-alpha,dev_score);
 	cudaDeviceSynchronize();
 	cudaMemcpy(score, dev_score, sizeof(int), cudaMemcpyDeviceToHost);
-	//da mettere nel kernel
-	//score = -Pvs(dev_c, depth - 1, (-alpha - 1), -alpha);
-
+	*score = -(*score);
+	
 	if (alpha < *score < beta) {
 		Pv_Split_Init<<<1, 7 >>>(dev_c, (depth - 1), firstMove.column, -beta, -(*score), dev_score);
 		cudaDeviceSynchronize();
 		cudaMemcpy(score, dev_score, sizeof(int), cudaMemcpyDeviceToHost);
-		//score = -Pvs(dev_c, depth - 1, -beta, -score);
+		*score = -(*score);
 	}
 			
 	alpha = max(alpha, *score);
@@ -1030,10 +1029,10 @@ int main() {
 	ifstream testFile("configurations.txt");
 	ofstream writeInFile;
 	writeInFile.open("benchmarker.txt");
-	/*size_t* s;
+	size_t* s;
 	s = (size_t*)malloc(sizeof(size_t));
-	cudaDeviceSetLimit(cudaLimitPrintfFifoSize,16384);
-	cudaDeviceGetLimit(s,cudaLimitStackSize);*/
+	cudaDeviceSetLimit(cudaLimitStackSize,16384);
+	cudaDeviceGetLimit(s,cudaLimitStackSize);
 	//GenerateResult(nullptr, 2);
 	if (testFile.is_open()) {
 		
@@ -1044,7 +1043,7 @@ int main() {
 			c = (Configuration*)malloc(sizeof(Configuration));
 			c = new Configuration(line);		
 
-			int r = Pv_Split(c, 5, numeric_limits<int>::min(), numeric_limits<int>::max());
+			int r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
 			
 			printf("Configuration N  %d \n", i);
 			printf("galpha %d \n", gAlpha);
@@ -1057,7 +1056,7 @@ int main() {
 			nodeCount = 0;
 			cudaDeviceReset();
 			i++;
-			if (i >0)
+			if (i >10)
 				break;
 		}
 	}
