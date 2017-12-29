@@ -81,9 +81,11 @@ public:
 #ifdef __CUDA_ARCH__
 		dev_board = (char*)malloc(sizeof(char)*Configuration::BOARD_SIZE);
 		memcpy(dev_board, _board, sizeof(char)*Configuration::BOARD_SIZE);
-		dev_board[_move.row * COLUMNS + _move.column] = _move.player;
+		if(_move.row!=-1)
+			dev_board[_move.row * COLUMNS + _move.column] = _move.player;
 #else
-		_board[_move.row*COLUMNS + _move.column] = _move.player;
+		if (_move.row != -1)
+			_board[_move.row*COLUMNS + _move.column] = _move.player;
 		board = new char[ROWS*COLUMNS];
 		for (int i = 0; i < ROWS*COLUMNS; i++) {
 			board[i] = _board[i];
@@ -879,32 +881,36 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 
 		int ix = 0;
 		bool validMove = false;
+		Configuration* dev_c = (Configuration*)malloc(sizeof(Configuration));
+		dev_c = new Configuration(configuration->dev_board, configuration->mLastmove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 		for (int i = Configuration::ROWS - 1; i >= 0; i--) {
 			ix = i*Configuration::COLUMNS + idx;
-			if (configuration->dev_board[ix] == '-') {
-				configuration->dev_board[ix] = configuration->mLastmove.player;
-				configuration->mLastmove = lastMove(i, idx, configuration->mLastmove.player, 0);
+			if (dev_c->dev_board[ix] == '-') {
+				dev_c->dev_board[ix] = dev_c->mLastmove.player;
+				//dev_c = new Configuration(configuration->dev_board, lastMove(i, idx, dev_c->mLastmove.player, 0), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+				dev_c->mLastmove = lastMove(i, idx, dev_c->mLastmove.player, 0);
 				validMove = true;
 				break;
 			}
 		}
+
 		if (!validMove)
 			return;
 
-		bool isWinningMove = configuration->dev_isWinningMove();
-		if ((isWinningMove && configuration->mLastmove.player == '0') || depth == 0) {
-			int t_score = -(configuration->getNMoves() - configuration->NumberStartMoves());
+		bool isWinningMove = dev_c->dev_isWinningMove();
+		if ((isWinningMove && dev_c->mLastmove.player == '0') || depth == 0) {
+			int t_score = -(dev_c->getNMoves() - dev_c->NumberStartMoves());
 			atomicExch(score, t_score);
 			return;
 		}
 
-		if ((isWinningMove && configuration->mLastmove.player == 'X') || depth == 0) {
-			int t_score = (configuration->getNMoves() - configuration->NumberStartMoves());
+		if ((isWinningMove && dev_c->mLastmove.player == 'X') || depth == 0) {
+			int t_score = (dev_c->getNMoves() - dev_c->NumberStartMoves());
 			atomicExch(score, t_score);
 			return;
 		}
 
-		if (configuration->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1) {
+		if (dev_c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1) {
 			int t_score = 0;
 			atomicExch(score, t_score);
 			return;
@@ -914,20 +920,20 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 		for (__int8 j = 0; j < Configuration::COLUMNS; j++) {
 			for (__int8 i = Configuration::ROWS - 1; i >= 0; i--) {
 				ix = i*Configuration::COLUMNS + j;
-				if (configuration->dev_board[ix] == '-') {
+				if (dev_c->dev_board[ix] == '-') {
 					size++;
 					break;
 				}
 			}
 		}
 
-		char nextPlayer = configuration->mLastmove.player == 'X' ? '0' : 'X';
-		lastMove* moves = configuration->dev_GenerateNextMoves(nextPlayer, size);
+		char nextPlayer = dev_c->mLastmove.player == 'X' ? '0' : 'X';
+		lastMove* moves = dev_c->dev_GenerateNextMoves(nextPlayer, size);
 
 		for (int i = 0; i<size; i++) {
 			int	mScore;
 			Configuration* c = (Configuration*)malloc(sizeof(Configuration));
-			c = new Configuration(configuration->dev_board, moves[i], configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+			c = new Configuration(dev_c->dev_board, moves[i], dev_c->getNMoves(), dev_c->NumberStartMoves(), dev_c->numberOfConfigurations);
 			if (i == 0) {
 				//if(depth==7)
 				//	cout << c << endl;
@@ -1005,7 +1011,8 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 	}
 
 	Configuration* dev_c;
-	//c = new Configuration(configuration->getBoard(), firstMove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+
+	c = new Configuration(configuration->getBoard(), lastMove(-1, -1, nextPlayer, 0), configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 	cudaMalloc(&dev_c, sizeof(Configuration));
 	cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
 	Pv_Split_Init<<<1, 7>>>(dev_c,(depth-1), firstMove.column,(-alpha-1),-alpha,dev_score);
@@ -1052,7 +1059,8 @@ int main() {
 			c = new Configuration(line);		
 
 			int r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
-			
+			if (!(r % 2 == 0))
+				r = -r;
 			printf("Configuration N  %d \n", i);
 			printf("galpha %d \n", gAlpha);
 			printf("gbeta %d \n", gBeta);
