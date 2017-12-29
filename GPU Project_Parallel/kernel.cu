@@ -855,8 +855,7 @@ __device__ int Device_Pvs(Configuration* configuration, int depth, int alpha, in
 
 			score = -Device_Pvs(c, depth - 1, -beta, -alpha);
 		}
-		else
-		{
+		else {
 			score = -Device_Pvs(c, depth - 1, (-alpha - 1), -alpha);
 			if (alpha < score < beta)
 				score = -Device_Pvs(c, depth - 1, -beta, -score);
@@ -895,19 +894,19 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 		bool isWinningMove = configuration->dev_isWinningMove();
 		if ((isWinningMove && configuration->mLastmove.player == '0') || depth == 0) {
 			int t_score = -(configuration->getNMoves() - configuration->NumberStartMoves());
-			atomicMax(score, t_score);
+			atomicExch(score, t_score);
 			return;
 		}
 
 		if ((isWinningMove && configuration->mLastmove.player == 'X') || depth == 0) {
 			int t_score = (configuration->getNMoves() - configuration->NumberStartMoves());
-			atomicMax(score, t_score);
+			atomicExch(score, t_score);
 			return;
 		}
 
 		if (configuration->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1) {
 			int t_score = 0;
-			atomicMax(score, t_score);
+			atomicExch(score, t_score);
 			return;
 		}
 		ix = 0;
@@ -934,8 +933,7 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 				//	cout << c << endl;
 				mScore = -Device_Pvs(c, depth - 1, -beta, -alpha);
 			}
-			else
-			{
+			else {
 				mScore = -Device_Pvs(c, depth - 1, (-alpha - 1), -alpha);
 				if (alpha < mScore < beta)
 					mScore = -Device_Pvs(c, depth - 1, -beta, -mScore);
@@ -952,7 +950,9 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 			}
 			free(c);
 		}
+
 		atomicMax(score, alpha);
+		//atomicMin(score, alpha);
 		return;
 	}
 }
@@ -990,6 +990,7 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 	score= (int*)malloc(sizeof(int));
 	cudaMalloc(&dev_score, sizeof(int));
 	
+	
 	Configuration* c = (Configuration*)malloc(sizeof(Configuration));
 
 	c = new Configuration(configuration->getBoard(), firstMove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
@@ -997,8 +998,14 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 	*score = -Pv_Split(c, depth - 1, -beta, -alpha);
 	cudaMemcpy(dev_score, score, sizeof(int), cudaMemcpyHostToDevice);
 
+	alpha = max(alpha, *score);
+	if (alpha >= beta) {
+		delete c;
+		return alpha;
+	}
+
 	Configuration* dev_c;
-	c = new Configuration(configuration->getBoard(), firstMove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+	//c = new Configuration(configuration->getBoard(), firstMove, configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 	cudaMalloc(&dev_c, sizeof(Configuration));
 	cudaMemcpy(dev_c, c, sizeof(Configuration), cudaMemcpyHostToDevice);
 	Pv_Split_Init<<<1, 7>>>(dev_c,(depth-1), firstMove.column,(-alpha-1),-alpha,dev_score);
@@ -1007,6 +1014,7 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 	*score = -(*score);
 	
 	if (alpha < *score < beta) {
+		cudaMemcpy(dev_score, score, sizeof(int), cudaMemcpyHostToDevice);
 		Pv_Split_Init<<<1, 7 >>>(dev_c, (depth - 1), firstMove.column, -beta, -(*score), dev_score);
 		cudaDeviceSynchronize();
 		cudaMemcpy(score, dev_score, sizeof(int), cudaMemcpyDeviceToHost);
