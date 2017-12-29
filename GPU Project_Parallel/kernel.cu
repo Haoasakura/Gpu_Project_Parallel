@@ -958,7 +958,7 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 		}
 
 		atomicMax(score, alpha);
-		//atomicMin(score, alpha);
+		free(dev_c);
 		return;
 	}
 }
