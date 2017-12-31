@@ -7,6 +7,8 @@
 #include <limits>
 #include <vector>
 #include <algorithm>
+#include <ctime>
+#include <cstdint>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "sm_32_atomic_functions.h"
@@ -60,8 +62,8 @@ public:
 
 		cudaMalloc(&dev_board, sizeof(char)*Configuration::BOARD_SIZE);
 		cudaMemcpy(dev_board, board, sizeof(char)*Configuration::BOARD_SIZE, cudaMemcpyHostToDevice);
-		PrintBoard();
-		printf("\n");
+		//PrintBoard();
+		//printf("\n");
 		mLastmove = lastMove(-1, -1, '0',0);
 		for each (char c in boardConfiguration)
 		{
@@ -69,6 +71,18 @@ public:
 				NumberOfMoves++;
 		}
 		NumberOfStartMoves = NumberOfMoves;
+	}
+
+	friend ostream& operator<<(ostream& os, const Configuration& confg) {
+
+		for (int i = 0; i < Configuration::ROWS; i++) {
+			for (int j = 0; j < Configuration::COLUMNS; j++) {
+				int idx = i*Configuration::COLUMNS + j;
+				os << confg.board[idx];
+			}
+			os << endl;
+		}
+		return os;
 	}
 	__host__ __device__ Configuration(char* _board, lastMove _move, int numMoves, int startMoves, __int8 numConfig) {
 		mLastmove.row = _move.row;
@@ -1040,10 +1054,15 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 
 int main() {
 	string line;
-	//double duration;
+	clock_t start;
+	double duration;
 	ifstream testFile("configurations.txt");
-	ofstream writeInFile;
-	writeInFile.open("benchmarker.txt");
+	ofstream writeInFileB;
+	ofstream writeInFileT;
+	writeInFileB.open("benchmarkerGpu.txt");
+	writeInFileT.open("benchmarkerTimeGpu.txt");
+
+
 	size_t* s;
 	s = (size_t*)malloc(sizeof(size_t));
 	cudaDeviceSetLimit(cudaLimitStackSize,16384);
@@ -1052,32 +1071,37 @@ int main() {
 	if (testFile.is_open()) {
 		
 
-		__int8 i = 0;
+		int i = 0;
 		while (getline(testFile, line)) {
 			Configuration* c;
+			start = clock();
 			c = (Configuration*)malloc(sizeof(Configuration));
 			c = new Configuration(line);		
-
+			writeInFileB << *c;
 			int r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
 			if (!(r % 2 == 0))
 				r = -r;
-			printf("Configuration N  %d \n", i);
-			printf("galpha %d \n", gAlpha);
-			printf("gbeta %d \n", gBeta);
-			printf("Result %d \n", r);
-			printf("nodes %u \n", nodeCount);
-			printf("-----------------------------------\n");
+
+			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
+			writeInFileT << i << " " << duration<<endl;
+			writeInFileB << "Configuration Number: " << i << endl;
+			writeInFileB << "Duration: " << duration << endl;
+			writeInFileB << "Number Of Turn Until Some Win: " << r << endl;
+			writeInFileB << "Number Of Nodes Calculated: " << nodeCount << endl;
+			writeInFileB << "________________________________" << endl;
 			
 			free(c);
 			nodeCount = 0;
 			cudaDeviceReset();
 			i++;
-			if (i >10)
+			if (i >500)
 				break;
 		}
 	}
 
-	
+	testFile.close();
+	writeInFileB.close();
+	writeInFileT.close();
 	system("pause");
     return 0;
 }
