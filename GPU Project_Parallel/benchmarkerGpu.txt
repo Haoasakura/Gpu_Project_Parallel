@@ -5,7 +5,7 @@
 0X-0-XX
 0X-0-X0
 Configuration Number: 0
-Duration: 3.556
+Duration: 3.489
 Number Of Turn Until Some Win: -6
 ________________________________
 -------
@@ -25,7 +25,7 @@ ________________________________
 0XX-00X
 0XX-00X
 Configuration Number: 2
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: 7
 ________________________________
 -------
@@ -85,8 +85,8 @@ ________________________________
 0X--0-X
 0X0X0-X
 Configuration Number: 8
-Duration: 0.001
-Number Of Turn Until Some Win: -12
+Duration: 0
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -96,7 +96,7 @@ ________________________________
 0X0X-0-
 Configuration Number: 9
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -115,8 +115,8 @@ ________________________________
 0X-X-X0
 0XX0-0X
 Configuration Number: 11
-Duration: 0.001
-Number Of Turn Until Some Win: -12
+Duration: 0
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -136,7 +136,7 @@ ________________________________
 0XX----
 Configuration Number: 13
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -145,8 +145,8 @@ ________________________________
 0XX-00X
 0X0-0XX
 Configuration Number: 14
-Duration: 0.001
-Number Of Turn Until Some Win: -12
+Duration: 0
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -216,7 +216,7 @@ ________________________________
 0XX0-X0
 Configuration Number: 21
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -245,7 +245,7 @@ ________________________________
 0X-0XX-
 0X-0X0X
 Configuration Number: 24
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: 7
 ________________________________
 -------
@@ -265,7 +265,7 @@ ________________________________
 0XX-0--
 0X0X0X-
 Configuration Number: 26
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: -4
 ________________________________
 -------
@@ -305,7 +305,7 @@ ________________________________
 0X0X-X-
 0XX00X-
 Configuration Number: 30
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: -8
 ________________________________
 -------
@@ -406,7 +406,7 @@ ________________________________
 0X-X00X
 Configuration Number: 40
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -436,7 +436,7 @@ ________________________________
 0XXX0-0
 Configuration Number: 43
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -476,7 +476,7 @@ ________________________________
 0XXX0-0
 Configuration Number: 47
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -485,7 +485,7 @@ ________________________________
 0X-XX0-
 0X-0X0X
 Configuration Number: 48
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: -10
 ________________________________
 -------
@@ -496,7 +496,7 @@ ________________________________
 0XX00-X
 Configuration Number: 49
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -586,7 +586,7 @@ ________________________________
 00X0-XX
 Configuration Number: 58
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -625,7 +625,7 @@ ________________________________
 0X0-XX0
 0XX-X00
 Configuration Number: 62
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: 1
 ________________________________
 -------
@@ -636,7 +636,7 @@ ________________________________
 0X-00XX
 Configuration Number: 63
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -646,7 +646,7 @@ ________________________________
 0X0X-X0
 Configuration Number: 64
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -726,7 +726,7 @@ ________________________________
 0XXX00-
 Configuration Number: 72
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -736,7 +736,7 @@ ________________________________
 0X--0X0
 Configuration Number: 73
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -756,7 +756,7 @@ ________________________________
 0XX00-X
 Configuration Number: 75
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -805,7 +805,7 @@ ________________________________
 0XX-0--
 0XX0X0-
 Configuration Number: 80
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: 5
 ________________________________
 -------
@@ -816,7 +816,7 @@ ________________________________
 0X--X0X
 Configuration Number: 81
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -846,7 +846,7 @@ ________________________________
 0X0-XX0
 Configuration Number: 84
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -886,7 +886,7 @@ ________________________________
 0X-0XX0
 Configuration Number: 88
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -956,7 +956,7 @@ ________________________________
 0X-X0-0
 Configuration Number: 95
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -976,7 +976,7 @@ ________________________________
 0X-X-X0
 Configuration Number: 97
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -985,7 +985,7 @@ ________________________________
 00-XX--
 00-XX0X
 Configuration Number: 98
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: -8
 ________________________________
 -------
@@ -1026,7 +1026,7 @@ ________________________________
 0X--0XX
 Configuration Number: 102
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1055,7 +1055,7 @@ ________________________________
 0X-0-X-
 0XXX00-
 Configuration Number: 105
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: 7
 ________________________________
 -------
@@ -1075,7 +1075,7 @@ ________________________________
 0X0--X-
 0XX--0X
 Configuration Number: 107
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: 9
 ________________________________
 -------
@@ -1156,7 +1156,7 @@ ________________________________
 0X0X-X-
 Configuration Number: 115
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1176,7 +1176,7 @@ ________________________________
 0X0--X0
 Configuration Number: 117
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1216,7 +1216,7 @@ ________________________________
 0X-0X0-
 Configuration Number: 121
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1225,7 +1225,7 @@ ________________________________
 0X-X0X0
 0X-00XX
 Configuration Number: 122
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: 5
 ________________________________
 -------
@@ -1246,7 +1246,7 @@ ________________________________
 0X0X---
 Configuration Number: 124
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1355,8 +1355,8 @@ ________________________________
 00--X-X
 00X-X-0
 Configuration Number: 135
-Duration: 0
-Number Of Turn Until Some Win: -12
+Duration: 0.001
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1386,7 +1386,7 @@ ________________________________
 0X-0XX0
 Configuration Number: 138
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1396,7 +1396,7 @@ ________________________________
 0X-0XX0
 Configuration Number: 139
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1406,7 +1406,7 @@ ________________________________
 0X-0X--
 Configuration Number: 140
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1415,7 +1415,7 @@ ________________________________
 0X0-X0X
 0XX-0X0
 Configuration Number: 141
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: 7
 ________________________________
 -------
@@ -1515,7 +1515,7 @@ ________________________________
 0X0XX0-
 0XXX00-
 Configuration Number: 151
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: 5
 ________________________________
 -------
@@ -1546,7 +1546,7 @@ ________________________________
 0X-0X-0
 Configuration Number: 154
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1566,7 +1566,7 @@ ________________________________
 0X-0X-X
 Configuration Number: 156
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1586,7 +1586,7 @@ ________________________________
 0XX-0-0
 Configuration Number: 158
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1606,7 +1606,7 @@ ________________________________
 0X--XX0
 Configuration Number: 160
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1695,7 +1695,7 @@ ________________________________
 0XX---X
 0X0-X-0
 Configuration Number: 169
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: 5
 ________________________________
 -------
@@ -1715,8 +1715,8 @@ ________________________________
 0X----0
 0X-X--X
 Configuration Number: 171
-Duration: 0
-Number Of Turn Until Some Win: -12
+Duration: 0.001
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1736,7 +1736,7 @@ ________________________________
 0X-0XX0
 Configuration Number: 173
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1745,8 +1745,8 @@ ________________________________
 00X0--X
 00X0-XX
 Configuration Number: 174
-Duration: 0.001
-Number Of Turn Until Some Win: -12
+Duration: 0
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1756,7 +1756,7 @@ ________________________________
 0X0-X0X
 Configuration Number: 175
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1806,7 +1806,7 @@ ________________________________
 0X-X-0X
 Configuration Number: 180
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1816,7 +1816,7 @@ ________________________________
 0X-X0X0
 Configuration Number: 181
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1826,7 +1826,7 @@ ________________________________
 00X0-XX
 Configuration Number: 182
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1835,7 +1835,7 @@ ________________________________
 0X0X--X
 0XXX0-0
 Configuration Number: 183
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: -6
 ________________________________
 -------
@@ -1845,7 +1845,7 @@ ________________________________
 0X--X-X
 0X--0-0
 Configuration Number: 184
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: -10
 ________________________________
 -------
@@ -1966,7 +1966,7 @@ ________________________________
 0X0-X0X
 Configuration Number: 196
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -1996,7 +1996,7 @@ ________________________________
 0X0-XX0
 Configuration Number: 199
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2096,7 +2096,7 @@ ________________________________
 0XX--00
 Configuration Number: 209
 Duration: 0
-Number Of Turn Until Some Win: 11
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2206,7 +2206,7 @@ ________________________________
 0X00-XX
 Configuration Number: 220
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2236,7 +2236,7 @@ ________________________________
 0X0-XX-
 Configuration Number: 223
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2316,7 +2316,7 @@ ________________________________
 0XX0-X0
 Configuration Number: 231
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2356,7 +2356,7 @@ ________________________________
 0XX-0X0
 Configuration Number: 235
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2366,7 +2366,7 @@ ________________________________
 0X---XX
 Configuration Number: 236
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2445,7 +2445,7 @@ ________________________________
 0X-X0X-
 0X-X00X
 Configuration Number: 244
-Duration: 0
+Duration: 0.001
 Number Of Turn Until Some Win: -8
 ________________________________
 -------
@@ -2475,7 +2475,7 @@ ________________________________
 0X---X0
 0X-X0X0
 Configuration Number: 247
-Duration: 0.001
+Duration: 0
 Number Of Turn Until Some Win: -4
 ________________________________
 -------
@@ -2496,7 +2496,7 @@ ________________________________
 0XX0--X
 Configuration Number: 249
 Duration: 0
-Number Of Turn Until Some Win: -12
+Number Of Turn Until Some Win: -10
 ________________________________
 -------
 -------
@@ -2506,2505 +2506,5 @@ ________________________________
 0X00X--
 Configuration Number: 250
 Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0X--X-
-0XX0-0-
-0X00-XX
-Configuration Number: 251
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--------
-00--XXX
-00--XX0
-Configuration Number: 252
-Duration: 0.001
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0----0
-0X--X-0
-0X--X-X
-Configuration Number: 253
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00X--X
-0XX0-X0
-0XX0-X0
-Configuration Number: 254
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
-----00-
-00-XXX-
-00-XXX-
-Configuration Number: 255
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---0X
-0XX--X0
-0X0X-0X
-Configuration Number: 256
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--------
-00X-0X-
-00X-XX-
-Configuration Number: 257
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--X--
-0X--XX-
-0X--00-
-Configuration Number: 258
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X---
-0X-00XX
-0X-0X0X
-Configuration Number: 259
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X----
-0X0----
-0XX0--X
-Configuration Number: 260
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0X--0-
-0XX--X0
-0X0-0XX
-Configuration Number: 261
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0--X--
-0X0XX0-
-0XXX00-
-Configuration Number: 262
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0X-X--
-0XX00--
-0X0X0-X
-Configuration Number: 263
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0-X--0
-0X-XX-0
-0X-0X0X
-Configuration Number: 264
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0--0--
-0X--XX-
-0X--0X-
-Configuration Number: 265
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X----
-0XX--X-
-0X0--0-
-Configuration Number: 266
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00----
-0XX-X0-
-0X0-XX-
-Configuration Number: 267
-Duration: 0
-Number Of Turn Until Some Win: 3
-________________________________
--------
--------
--------
--0-X-00
-0X-0-XX
-0X-X-0X
-Configuration Number: 268
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0---0-
-0X--XX-
-0XX-0X0
-Configuration Number: 269
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0---0-
-0X---X-
-0XX-X0-
-Configuration Number: 270
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---X-
-0X---X-
-0X0--0X
-Configuration Number: 271
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0---X0
-0X0--XX
-0XX-00X
-Configuration Number: 272
-Duration: 0.001
-Number Of Turn Until Some Win: 3
-________________________________
--------
--------
--------
--00----
-0XX-X--
-0XX00X-
-Configuration Number: 273
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
----X---
-00-0-XX
-00XX-0X
-Configuration Number: 274
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0---XX
-0X-0-X0
-0XX0-0X
-Configuration Number: 275
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0---X-
-0X-XX00
-0X-0XX0
-Configuration Number: 276
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
---0--0-
-0XXX-0-
-00XX-X-
-Configuration Number: 277
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
----X---
-00XX---
-00X0--X
-Configuration Number: 278
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
-----XX-
-00--X0X
-00--0XX
-Configuration Number: 279
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0--0X-
-0X--X0-
-0X-X0X-
-Configuration Number: 280
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0X0XX--
-0X0X0X-
-Configuration Number: 281
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0-----
-0X--XX0
-0X0-0XX
-Configuration Number: 282
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X--X
-0X-0-0X
-0X-0XX0
-Configuration Number: 283
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0--X-X
-0X--0X0
-0XX-0X0
-Configuration Number: 284
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X0X-
-0XX0X0-
-0X00XX-
-Configuration Number: 285
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0X--X0
-0X0X-0X
-0X00-XX
-Configuration Number: 286
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0X----
-0X0-X--
-0XX00-X
-Configuration Number: 287
-Duration: 0
 Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--00X--X
-0XXX--0
-0X00--X
-Configuration Number: 288
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
-----X--
-0X0X0--
-000XXX-
-Configuration Number: 289
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---0-
-0XXX-0-
-0XX0-X-
-Configuration Number: 290
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0-X00-
-0X-0XX-
-0X-X0X-
-Configuration Number: 291
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0--0-X
-0X--0-X
-0XX-X-0
-Configuration Number: 292
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00-XX-
-0X0-X0-
-0XX-0X-
-Configuration Number: 293
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
---00XX-
-0XX00X-
-00XXX0-
-Configuration Number: 294
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0XX0X--
-0XX0X-0
-Configuration Number: 295
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0-----
-0XX---X
-0XX-0-0
-Configuration Number: 296
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--0XX-0-
-0XX0X0-
-0X00XX-
-Configuration Number: 297
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
---0XX--
-0XX00--
-00X0X-X
-Configuration Number: 298
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X-X-
-0X-X-00
-0X-0X0X
-Configuration Number: 299
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-XX--
-0X-00X-
-0X0X0X-
-Configuration Number: 300
-Duration: 0.001
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0---X0
-0XX--0X
-0XX-X00
-Configuration Number: 301
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-0-X-
-0XXX-0-
-0XX0X0-
-Configuration Number: 302
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
----X-0-
-00-XXX-
-00-0XX-
-Configuration Number: 303
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
----X---
-00XX---
-00X0-X-
-Configuration Number: 304
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0----X
-0X00X-X
-0XX0X-0
-Configuration Number: 305
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--0-X---
-0X00XX-
-0X0XX0-
-Configuration Number: 306
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0-X-X0
-0X-X-00
-0X-0-XX
-Configuration Number: 307
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0--X--
-0X--0--
-0X-0X-X
-Configuration Number: 308
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X-X-0
-0X0-0XX
-0X0-XX0
-Configuration Number: 309
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0---X-
-0XX-X0-
-0X0-0X-
-Configuration Number: 310
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--------
-00X---X
-00X---X
-Configuration Number: 311
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--00X0--
-0XX0X--
-0XXX0--
-Configuration Number: 312
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
-----0-X
-00X-XX0
-00X-0XX
-Configuration Number: 313
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0X---0
-0X0X--X
-0X00X-X
-Configuration Number: 314
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-XX0-
-0X-0XX0
-0X-X00X
-Configuration Number: 315
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-----
-0X-X0--
-0X-X0X-
-Configuration Number: 316
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0X--X0
-0X0X-0X
-0X0X-X0
-Configuration Number: 317
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0--X0X
-0X--X00
-0X--0XX
-Configuration Number: 318
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00---X
-0XX-X-0
-0X00X-X
-Configuration Number: 319
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
------X-
-000X-X-
-00XXX0-
-Configuration Number: 320
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-----
-0X-----
-0X--0XX
-Configuration Number: 321
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0XX---
-0X0X0--
-0X00XX-
-Configuration Number: 322
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---X-
-0X---0-
-0X-0XX-
-Configuration Number: 323
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0X-0X-
-0X0-X0X
-0XX-0X0
-Configuration Number: 324
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--0-0-X0
-0X-X-0X
-0X-X-X0
-Configuration Number: 325
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0X----
-0XX-X00
-0X0-X0X
-Configuration Number: 326
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0X--X-
-0X0--0X
-0X0-X0X
-Configuration Number: 327
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--------
-00X-XX0
-00X-0XX
-Configuration Number: 328
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0-X-0-
-0X-0XX-
-0X0X0X-
-Configuration Number: 329
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0X-X--
-0XX-0--
-0X0-0X-
-Configuration Number: 330
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0X0-X-
-0XXX-0-
-0X0X-0-
-Configuration Number: 331
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--00----
-0XX---X
-0XX-0X0
-Configuration Number: 332
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00X---
-0X0X-X-
-0XX0X0-
-Configuration Number: 333
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
----XX--
-00-X0X-
-00-0XX-
-Configuration Number: 334
-Duration: 0.001
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0-----
-0X--0--
-0X--XX-
-Configuration Number: 335
-Duration: 0
-Number Of Turn Until Some Win: 3
-________________________________
--------
--------
--------
--------
-00---XX
-00X-X0X
-Configuration Number: 336
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0-0---
-0X-X-X-
-0XX00X-
-Configuration Number: 337
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0---X-
-0X---0-
-0XXX-0-
-Configuration Number: 338
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---0-
-0X---X-
-0X-X-0X
-Configuration Number: 339
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-0---
-0X-X-X-
-0X0X0X-
-Configuration Number: 340
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--------
-00XX-0-
-00XX-X-
-Configuration Number: 341
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--X--
-0X0-X--
-0XX-0X0
-Configuration Number: 342
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0X----
-0X00-XX
-0XX0-X0
-Configuration Number: 343
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00X--X
-0XX0-0X
-0XXX-00
-Configuration Number: 344
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00X---
-0XX0--X
-0X00X-X
-Configuration Number: 345
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0---X-
-0X00XX-
-0XXX00-
-Configuration Number: 346
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--------
-0X0-X--
-000XXX-
-Configuration Number: 347
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--------
-00---XX
-00X-XX0
-Configuration Number: 348
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
---X0---
-00X0X-X
-000XX-X
-Configuration Number: 349
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00X--X
-0X0X0-X
-0XX0X-0
-Configuration Number: 350
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0--0-X
-0X--XX0
-0XX-X00
-Configuration Number: 351
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-----
-0XX-0--
-0XXX0--
-Configuration Number: 352
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
---X---0
-00X---X
-000-XXX
-Configuration Number: 353
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-X0-X
-0X-X0-X
-0X-0X-0
-Configuration Number: 354
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0--0--
-0X-XX--
-0X0X0-X
-Configuration Number: 355
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--X0-
-0X--0X-
-0X--X0X
-Configuration Number: 356
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00-X--
-0XX-0X-
-0X00XX-
-Configuration Number: 357
-Duration: 0.001
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0--0--
-0X-XX--
-0X-0X--
-Configuration Number: 358
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
-----X--
-00-X0X-
-00-XXX0
-Configuration Number: 359
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-X---
-0X-0---
-0XX0--X
-Configuration Number: 360
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X---0
-0X0X--X
-0XX0X-0
-Configuration Number: 361
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--0--
-0X--XX-
-0XX-00X
-Configuration Number: 362
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0---X-
-0X--X0-
-0X00XX-
-Configuration Number: 363
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0-----
-0X0-X-X
-0X0XX-0
-Configuration Number: 364
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--0---X0
-0X--X0X
-0X-00XX
-Configuration Number: 365
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0----X
-0X-X--0
-0X-X--0
-Configuration Number: 366
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00-XX-
-0XX00X-
-0XX0X0-
-Configuration Number: 367
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0X-X0X-
-0XX0X0-
-Configuration Number: 368
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0X0--X
-0X0X0-X
-0XXX0-0
-Configuration Number: 369
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0----X
-0X-X0X0
-0X-0X0X
-Configuration Number: 370
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X---
-0X-0--X
-0X-0--X
-Configuration Number: 371
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0--XX0
-0X--X0X
-0X--00X
-Configuration Number: 372
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0X0XX--
-0X0X0-X
-Configuration Number: 373
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0-X--X
-0X-0--0
-0X0X--X
-Configuration Number: 374
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X---
-0X0X---
-0XX0X-0
-Configuration Number: 375
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
-----0--
-00XXX--
-00X0X-X
-Configuration Number: 376
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0--0--
-0X--XX-
-0X0X0X-
-Configuration Number: 377
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-0X--
-0XXX0--
-0X0X0X-
-Configuration Number: 378
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0----X
-0X--0XX
-0X--0X0
-Configuration Number: 379
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0--X-0
-0XX-0-X
-0XX-0X0
-Configuration Number: 380
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--00X-X-
-0X0X-0X
-0XX0-X0
-Configuration Number: 381
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
---X0--X
-00XX--0
-000X-XX
-Configuration Number: 382
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00--XX
-0XX0-0X
-0X0X-X0
-Configuration Number: 383
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--------
-00-X-X-
-00X0XX-
-Configuration Number: 384
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
-----X--
-00X-0-X
-000-XXX
-Configuration Number: 385
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00---X
-0XX---0
-0XX-X-0
-Configuration Number: 386
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--XX-
-0X--0X-
-0X-X00-
-Configuration Number: 387
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
---X0---
-000XX-X
-00XXX-0
-Configuration Number: 388
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00--X-
-0X0--X-
-0XX-X0-
-Configuration Number: 389
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0X---X
-0X0--X0
-0X0-X0X
-Configuration Number: 390
-Duration: 0.001
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--00-X--
-0X0XX--
-0XX00X-
-Configuration Number: 391
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-XX-0
-0X0XX-0
-0XX00-X
-Configuration Number: 392
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
---X-0--
-00XX0X-
-000XXX-
-Configuration Number: 393
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
----X---
-00X0X--
-00X0X-X
-Configuration Number: 394
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0---XX
-0X-X-00
-0X-0X0X
-Configuration Number: 395
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0--0-X
-0X-XX-0
-0XX0X-0
-Configuration Number: 396
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-----
-0X--X--
-0XX0X0-
-Configuration Number: 397
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0X-X---
-0X-0-X-
-Configuration Number: 398
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
---X----
-00XX-0-
-000X-XX
-Configuration Number: 399
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
---0----
-00XXX--
-00X0XX-
-Configuration Number: 400
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0X-X--
-0X0-0--
-0XXX0--
-Configuration Number: 401
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-0--X
-0XX0--X
-0XXX-00
-Configuration Number: 402
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---X-
-0XX--0-
-0X00-XX
-Configuration Number: 403
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-0---
-0XXX---
-0X0XX0-
-Configuration Number: 404
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---XX
-0X---00
-0X-X-0X
-Configuration Number: 405
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
----X---
-00X0X--
-00XXX-0
-Configuration Number: 406
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-X---
-0X-0---
-0X-X-0X
-Configuration Number: 407
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--00X-X-
-0X00-X-
-0XXX-0-
-Configuration Number: 408
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-X--X
-0X-X-00
-0XX0-X0
-Configuration Number: 409
-Duration: 0.001
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0X0---
-0XXX---
-0X0X0--
-Configuration Number: 410
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-X-X0
-0XXX-00
-0XX0-0X
-Configuration Number: 411
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--00X---
-0XXX0--
-0XX00-X
-Configuration Number: 412
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0X-X0-
-0X0-XX0
-0XX-0X0
-Configuration Number: 413
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0XX-0-
-0X0X-X-
-0XX0-0-
-Configuration Number: 414
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-0XX-
-0XX0X0-
-0X0X0X-
-Configuration Number: 415
-Duration: 0.001
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
-------0
-00X---X
-00X-X-X
-Configuration Number: 416
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
---XX--0
-00X0--X
-000X-XX
-Configuration Number: 417
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0----X
-0X0-0-X
-0XX-X-0
-Configuration Number: 418
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
---X-X--
-00XX0--
-000XX--
-Configuration Number: 419
-Duration: 0
-Number Of Turn Until Some Win: 3
-________________________________
--------
--------
--------
--0-X-X-
-0X0X-0-
-0XX00X-
-Configuration Number: 420
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0-X---
-0XX0-X0
-0XX0-X0
-Configuration Number: 421
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0--0X-
-0X-0XX-
-0X0XX0-
-Configuration Number: 422
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--------
-0X0-X-X
-000-X-X
-Configuration Number: 423
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0X--0-
-0X0--XX
-0XX0-X0
-Configuration Number: 424
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
----XX--
-00-0X--
-00-X0XX
-Configuration Number: 425
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0-0--X
-0X-X--0
-0X-X0-X
-Configuration Number: 426
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-XX--
-0X-00X-
-0X-XX00
-Configuration Number: 427
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
----X-0-
-00XX-X-
-00X0-X-
-Configuration Number: 428
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0-X--X
-0X-0-X0
-0X-X0X0
-Configuration Number: 429
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
-----0X-
-00-0XXX
-00-XX0X
-Configuration Number: 430
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--00-XX-
-0XX-0X0
-0XX-00X
-Configuration Number: 431
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0X----
-0X0X---
-0XX0X0-
-Configuration Number: 432
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
---0----
-00XX--X
-00XX-0X
-Configuration Number: 433
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--------
-00-X--X
-000XX-X
-Configuration Number: 434
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--X--
-0X-XX-0
-0X-00-X
-Configuration Number: 435
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X-X--
-0X0X0--
-0XX0X-0
-Configuration Number: 436
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--0X-
-0X-XX0-
-0X-X00X
-Configuration Number: 437
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0X-0X-
-0X0-X0X
-0X0-XX0
-Configuration Number: 438
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0-----
-0X0--XX
-0XX0-X0
-Configuration Number: 439
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
-----X0-
-00XX0X-
-00XX0X-
-Configuration Number: 440
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
-----X0-
-00-X0XX
-00-XX0X
-Configuration Number: 441
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0--X--
-0XX-0X0
-0XX-00X
-Configuration Number: 442
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--0-0X-0
-0X-X0-X
-0X-XX-0
-Configuration Number: 443
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0--0-X
-0X-0X-X
-0X-X0X0
-Configuration Number: 444
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-X0-X
-0X-0X-0
-0X-0X-X
-Configuration Number: 445
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0-X---
-0XX00-X
-0X0XX-0
-Configuration Number: 446
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--00--X-
-0XX--0X
-0XX0-X0
-Configuration Number: 447
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0X---X
-0X0--X0
-0X0X-X0
-Configuration Number: 448
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
-----X--
-00X-0X-
-00X-XX0
-Configuration Number: 449
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0-----
-0X--X--
-0X0-0XX
-Configuration Number: 450
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
---0XX-0
-00X0X-X
-00XX0-X
-Configuration Number: 451
-Duration: 0.001
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0X-X-0X
-0X-X00X
-Configuration Number: 452
-Duration: 0
-Number Of Turn Until Some Win: -10
-________________________________
--------
--------
--------
--0X-0--
-0X0-X-X
-0X0X0-X
-Configuration Number: 453
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
-----X0-
-00X-0XX
-00X-0XX
-Configuration Number: 454
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--0--X--
-0XX-0X0
-0XX-0X0
-Configuration Number: 455
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--00----
-0XX--X-
-0X0-XX0
-Configuration Number: 456
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0---0-
-0XX--0-
-0XX--X-
-Configuration Number: 457
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0--X--
-0X--0-X
-0X0-0XX
-Configuration Number: 458
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0XX---
-0X00--X
-0XX0-0X
-Configuration Number: 459
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0--0X-
-0X--X0X
-0XX-00X
-Configuration Number: 460
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0---X-
-0X---X0
-0XX0-0X
-Configuration Number: 461
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X--XX
-0XX--00
-0X0--0X
-Configuration Number: 462
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X--X
-0X-0-X0
-0X-00XX
-Configuration Number: 463
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
----X-0X
-00-X-X0
-00-0XXX
-Configuration Number: 464
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0--X--
-0X--X0-
-0X-X00X
-Configuration Number: 465
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
--0---0-
-0X--XX-
-0X00XX-
-Configuration Number: 466
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
--0---X-
-0X0--X-
-0XX--0-
-Configuration Number: 467
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
--00-X-X
-0X0-X-X
-0XX-0-0
-Configuration Number: 468
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--0X-0--
-0X0-X-X
-0XX00-X
-Configuration Number: 469
-Duration: 0
-Number Of Turn Until Some Win: -8
-________________________________
--------
--------
--------
----0X--
-00XX0X-
-00XX0X-
-Configuration Number: 470
-Duration: 0.001
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
---0-X--
-0XX00-X
-00X0X-X
-Configuration Number: 471
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X---X
-0X0--0X
-0X0X-X0
-Configuration Number: 472
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X----
-0X0XX0-
-0X0XX0-
-Configuration Number: 473
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--00-X--
-0X0-X--
-0XXX0--
-Configuration Number: 474
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--0-----
-0X--X--
-0X--X-0
-Configuration Number: 475
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0----X
-0XX-X-0
-0X0-0-X
-Configuration Number: 476
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0X--X0
-0XX0-0X
-0X00-XX
-Configuration Number: 477
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0XX---
-0XX00--
-0X00X-X
-Configuration Number: 478
-Duration: 0
-Number Of Turn Until Some Win: 9
-________________________________
--------
--------
--------
----0--X
-00-X-XX
-00-X-X0
-Configuration Number: 479
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0XX--0
-0X0X0-X
-0XX0X-0
-Configuration Number: 480
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
----X-0-
-0X00-XX
-000X-XX
-Configuration Number: 481
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
---0-0-X
-00X-X-X
-00XXX-0
-Configuration Number: 482
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--0---0-
-0X-X-X-
-0X-X-0-
-Configuration Number: 483
-Duration: 0
-Number Of Turn Until Some Win: 11
-________________________________
--------
--------
--------
-----0X-
-00-XX0X
-00-0XXX
-Configuration Number: 484
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
---0-X--
-00X-X--
-00XX0X-
-Configuration Number: 485
-Duration: 0
-Number Of Turn Until Some Win: 3
-________________________________
--------
--------
--------
--00X---
-0X0X--X
-0XX0-X0
-Configuration Number: 486
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0--X--
-0X-X0--
-0X-0X--
-Configuration Number: 487
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X---
-0X-X-X-
-0X-0-0-
-Configuration Number: 488
-Duration: 0
-Number Of Turn Until Some Win: -4
-________________________________
--------
--------
--------
--00----
-0XXX---
-0XXX-00
-Configuration Number: 489
-Duration: 0
-Number Of Turn Until Some Win: 1
-________________________________
--------
--------
--------
--------
-00-XXX0
-00-XX0X
-Configuration Number: 490
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0X----
-0XX--0-
-0X0-X0X
-Configuration Number: 491
-Duration: 0
-Number Of Turn Until Some Win: 5
-________________________________
--------
--------
--------
--0X-0-X
-0XX-X00
-0X0-0XX
-Configuration Number: 492
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0---XX
-0X---X0
-0XX--00
-Configuration Number: 493
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-X---
-0X00XX-
-0X0X0X-
-Configuration Number: 494
-Duration: 0
-Number Of Turn Until Some Win: 3
-________________________________
--------
--------
--------
--0----X
-0X--X-0
-0XX-0X0
-Configuration Number: 495
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--0-----
-0X--X-0
-0XX-0-X
-Configuration Number: 496
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
--00-X-X
-0X0-X0X
-0XX-0X0
-Configuration Number: 497
-Duration: 0
-Number Of Turn Until Some Win: 7
-________________________________
--------
--------
--------
--0X0-X-
-0XX0-0-
-0X0X-X-
-Configuration Number: 498
-Duration: 0
-Number Of Turn Until Some Win: -6
-________________________________
--------
--------
--------
--00----
-0XX---X
-0X0-0XX
-Configuration Number: 499
-Duration: 0
-Number Of Turn Until Some Win: -12
-________________________________
--------
--------
--------
------X-
-00--X0X
-00-XXX0
-Configuration Number: 500
-Duration: 0
-Number Of Turn Until Some Win: 1
 ________________________________

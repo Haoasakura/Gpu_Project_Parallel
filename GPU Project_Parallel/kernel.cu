@@ -1188,6 +1188,7 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 int main() {
 	string line;
 	clock_t start;
+	clock_t total_start;
 	double duration;
 	ifstream testFile("configurations.txt");
 	ofstream writeInFileB;
@@ -1205,6 +1206,7 @@ int main() {
 		
 
 		int i = 0;
+		total_start = clock();
 		while (getline(testFile, line)) {
 			Configuration* c;	
 			c = (Configuration*)malloc(sizeof(Configuration));
@@ -1219,7 +1221,7 @@ int main() {
 					r = -r;
 			}
 			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
-			writeInFileT << i << " " << setprecision(8)<< duration<<endl;
+			//writeInFileT << i << " " << setprecision(8)<< duration<<endl;
 			writeInFileB << "Configuration Number: " << i << endl;
 			writeInFileB << "Duration: " << setprecision(8)<<duration << endl;
 			writeInFileB << "Number Of Turn Until Some Win: " << r << endl;
@@ -1230,14 +1232,15 @@ int main() {
 			//nodeCount = 0;
 			cudaDeviceReset();
 			i++;
-			if (i >500)
+			if (i >250)
 				break;
 		}
 	}
 
 	testFile.close();
 	writeInFileB.close();
-	writeInFileT.close();
+	//writeInFileT.close();
+	cout << ((clock() - total_start) / (double)CLOCKS_PER_SEC) << endl;
 	system("pause");
     return 0;
 }
