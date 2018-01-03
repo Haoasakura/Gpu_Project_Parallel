@@ -1086,6 +1086,28 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 		return;
 	}
 }
+int FirstSevenMoves(Configuration* configuration)
+{
+	char nextPlayer = configuration->mLastmove.player == 'X' ? '0' : 'X';
+	lastMove *moves = configuration->GenerateNextMoves(nextPlayer,6);
+	for (int i = 0; i < 6; i++)
+	{
+
+		Configuration c = Configuration(configuration->getBoard(), moves[i], configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
+		bool isWinningMove = c.isWinningMove();
+		if ((isWinningMove && c.mLastmove.player == '0')) {
+			nodeCount = i + 1;
+			return -1;
+		}
+
+		if ((isWinningMove && c.mLastmove.player == 'X')) {
+			nodeCount = i + 1;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 
 int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 	nodeCount++;
@@ -1172,7 +1194,7 @@ int main() {
 	writeInFileB.open("benchmarkerGpu.txt");
 	writeInFileT.open("benchmarkerTimeGpu.txt");
 
-
+	int r = 0;
 	size_t* s;
 	s = (size_t*)malloc(sizeof(size_t));
 	cudaDeviceSetLimit(cudaLimitStackSize,16384);
@@ -1188,10 +1210,13 @@ int main() {
 			c = new Configuration(line);		
 			writeInFileB << *c;
 			start = clock();
-			int r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
-			if (!(r % 2 == 0))
-				r = -r;
-
+			r = FirstSevenMoves(c);
+			if (r == 0)
+			{
+				r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
+				if (!(r % 2 == 0))
+					r = -r;
+			}
 			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 			writeInFileT << i << " " << duration<<endl;
 			writeInFileB << "Configuration Number: " << i << endl;
