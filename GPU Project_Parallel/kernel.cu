@@ -12,12 +12,13 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "sm_32_atomic_functions.h"
+#include <iomanip> 
 
 using namespace std;
 
 __device__ __managed__ int gAlpha;
 __device__ __managed__ int gBeta;
-__device__ __managed__ unsigned int nodeCount = 0;
+//__device__ __managed__ unsigned int nodeCount = 0;
 __device__ __managed__ __int8 NUMBEROFCHILDREN = 7;
 
 struct lastMove {
@@ -909,7 +910,7 @@ __global__ void  kernelCheck(Configuration * dev_c)
 	}
 }
 __device__ int Device_Pvs(Configuration* configuration, int depth, int alpha, int beta) {
-	nodeCount++;
+	//nodeCount++;
 	if (configuration->mLastmove.row != -1)
 	{
 		kernelCheck << <1, 4 >> > (configuration);
@@ -982,7 +983,7 @@ __device__ int Device_Pvs(Configuration* configuration, int depth, int alpha, in
 __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8 skipColumn, __int8 alpha, __int8 beta, int* score) {
 	unsigned long idx = blockDim.x * blockIdx.x + threadIdx.x;
 	if (idx < 7 && idx != skipColumn) {
-		atomicAdd(&nodeCount, 1);
+		//atomicAdd(&nodeCount, 1);
 
 		int ix = 0;
 		bool validMove = false;
@@ -1096,12 +1097,12 @@ int FirstSevenMoves(Configuration* configuration)
 		Configuration c = Configuration(configuration->getBoard(), moves[i], configuration->getNMoves(), configuration->NumberStartMoves(), configuration->numberOfConfigurations);
 		bool isWinningMove = c.isWinningMove();
 		if ((isWinningMove && c.mLastmove.player == '0')) {
-			nodeCount = i + 1;
+			//nodeCount = i + 1;
 			return -1;
 		}
 
 		if ((isWinningMove && c.mLastmove.player == 'X')) {
-			nodeCount = i + 1;
+			//nodeCount = i + 1;
 			return 1;
 		}
 	}
@@ -1110,7 +1111,7 @@ int FirstSevenMoves(Configuration* configuration)
 
 
 int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
-	nodeCount++;
+	//nodeCount++;
 	bool isWinningMove = configuration->isWinningMove();
 	if ((isWinningMove && configuration->mLastmove.player == '0') || depth == 0) {
 		return -(configuration->getNMoves() - configuration->NumberStartMoves());
@@ -1213,20 +1214,20 @@ int main() {
 			r = FirstSevenMoves(c);
 			if (r == 0)
 			{
-				r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
+				r = Pv_Split(c, 10, numeric_limits<int>::min(), numeric_limits<int>::max());
 				if (!(r % 2 == 0))
 					r = -r;
 			}
 			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
-			writeInFileT << i << " " << duration<<endl;
+			writeInFileT << i << " " << setprecision(8)<< duration<<endl;
 			writeInFileB << "Configuration Number: " << i << endl;
-			writeInFileB << "Duration: " << duration << endl;
+			writeInFileB << "Duration: " << setprecision(8)<<duration << endl;
 			writeInFileB << "Number Of Turn Until Some Win: " << r << endl;
-			writeInFileB << "Number Of Nodes Calculated: " << nodeCount << endl;
+			//writeInFileB << "Number Of Nodes Calculated: " << nodeCount << endl;
 			writeInFileB << "________________________________" << endl;
 			
 			free(c);
-			nodeCount = 0;
+			//nodeCount = 0;
 			cudaDeviceReset();
 			i++;
 			if (i >500)
