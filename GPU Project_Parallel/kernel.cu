@@ -88,6 +88,7 @@ public:
 		mLastmove.row = _move.row;
 		mLastmove.column = _move.column;
 		mLastmove.player = _move.player;
+		mLastmove.value = -1;
 		NumberOfStartMoves = startMoves;
 		NumberOfMoves = numMoves + 1;
 		numberOfConfigurations = numConfig;
@@ -833,9 +834,98 @@ __device__ void BoardPrint(Configuration *c) {
 		printf("\n");
 	}
 }
+
+__global__ void  kernelCheck(Configuration * dev_c)
+{
+	unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
+
+	
+	int counter = 0;
+	int ki = 0;
+	int ky = 0;
+	switch (idx)
+	{
+	case 0:
+		//check the column
+		for (int j = 0; j < dev_c->COLUMNS; j++) {
+			if (dev_c->dev_board[dev_c->mLastmove.row*dev_c->COLUMNS + j] == dev_c->mLastmove.player) {
+				counter++;
+				if (counter >= 4)
+					dev_c->mLastmove.value = -3;
+			}
+			else
+				counter = 0;
+		}
+		break;
+	case 1:
+		for (int i = 0; i < dev_c->ROWS; i++) {
+			if (dev_c->dev_board[i*dev_c->COLUMNS + dev_c->mLastmove.column] == dev_c->mLastmove.player) {
+				counter++;
+				if (counter >= 4)
+					dev_c->mLastmove.value = -3;
+			}
+			else
+				counter = 0;
+		}
+		break;
+	case 2:
+		ki = dev_c->mLastmove.row;
+		ky = dev_c->mLastmove.column;
+		for (; (ki > 0 && ky > 0); ki--, ky--) {
+		}
+		if (!(ki >= 3 || ky >= 3)) {
+			for (int k = 0; (ki + k < dev_c->ROWS && ky + k < dev_c->COLUMNS); k++) {
+				if (dev_c->dev_board[(ki + k)*dev_c->COLUMNS + (ky + k)] == dev_c->mLastmove.player) {
+					counter++;
+					if (counter >= 4) {
+						dev_c->mLastmove.value = -3;
+					}
+				}
+				else {
+					counter = 0;
+				}
+			}
+		}
+		break;
+	case 3:
+		ki = dev_c->mLastmove.row;
+		ky = dev_c->mLastmove.column;
+		for (; (ki < dev_c->ROWS - 1 && ky > 0); ki++, ky--) {
+		}
+		if (!(ki < 3 || ky > 3)) {
+			for (int k = 0; (ki - k >= 0 && ky + k < dev_c->COLUMNS); k++) {
+				if (dev_c->dev_board[(ki - k)*dev_c->COLUMNS + (ky + k)] == dev_c->mLastmove.player) {
+					counter++;
+					if (counter >= 4) {
+						dev_c->mLastmove.value = -3;
+					}
+				}
+				else {
+					counter = 0;
+				}
+			}
+		}
+		break;
+	}
+}
 __device__ int Device_Pvs(Configuration* configuration, int depth, int alpha, int beta) {
 	nodeCount++;
+	if (configuration->mLastmove.row != -1)
+	{
+		kernelCheck << <1, 4 >> > (configuration);
+		cudaDeviceSynchronize();
+	}
+	
+	if ((configuration->mLastmove.value==-3 && configuration->mLastmove.player == '0') || depth == 0) {
+		return -(configuration->getNMoves() - configuration->NumberStartMoves());
+	}
 
+	if ((configuration->mLastmove.value == -3 && configuration->mLastmove.player == 'X') || depth == 0) {
+		return (configuration->getNMoves() - configuration->NumberStartMoves());
+	}
+	
+	
+	/*
 	bool isWinningMove = configuration->dev_isWinningMove();
 	if ((isWinningMove && configuration->mLastmove.player == '0') || depth == 0) {
 		return -(configuration->getNMoves() - configuration->NumberStartMoves());
@@ -844,6 +934,7 @@ __device__ int Device_Pvs(Configuration* configuration, int depth, int alpha, in
 	if ((isWinningMove && configuration->mLastmove.player == 'X') || depth == 0) {
 		return (configuration->getNMoves() - configuration->NumberStartMoves());
 	}
+	*/
 
 	if (configuration->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1)
 		return 0;
@@ -910,7 +1001,25 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 
 		if (!validMove)
 			return;
+		if (dev_c->mLastmove.row != -1)
+		{
+			kernelCheck << <1, 4 >> > (dev_c);
+			cudaDeviceSynchronize();
+		}
 
+		if ((dev_c->mLastmove.value == -3 && dev_c->mLastmove.player == '0') || depth == 0) {
+			int t_score = -(dev_c->getNMoves() - dev_c->NumberStartMoves());
+			atomicExch(score, t_score);
+			return;
+		}
+
+		if ((dev_c->mLastmove.value == -3 && dev_c->mLastmove.player == 'X') || depth == 0) {
+			int t_score = (dev_c->getNMoves() - dev_c->NumberStartMoves());
+			atomicExch(score, t_score);
+			return;
+		}
+
+		/*
 		bool isWinningMove = dev_c->dev_isWinningMove();
 		if ((isWinningMove && dev_c->mLastmove.player == '0') || depth == 0) {
 			int t_score = -(dev_c->getNMoves() - dev_c->NumberStartMoves());
@@ -923,6 +1032,7 @@ __global__ void Pv_Split_Init(Configuration* configuration, __int8 depth, __int8
 			atomicExch(score, t_score);
 			return;
 		}
+		*/
 
 		if (dev_c->getNMoves() > Configuration::ROWS*Configuration::COLUMNS - 1) {
 			int t_score = 0;
@@ -1073,11 +1183,11 @@ int main() {
 
 		int i = 0;
 		while (getline(testFile, line)) {
-			Configuration* c;
-			start = clock();
+			Configuration* c;	
 			c = (Configuration*)malloc(sizeof(Configuration));
 			c = new Configuration(line);		
 			writeInFileB << *c;
+			start = clock();
 			int r = Pv_Split(c, 6, numeric_limits<int>::min(), numeric_limits<int>::max());
 			if (!(r % 2 == 0))
 				r = -r;
