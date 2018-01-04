@@ -13,7 +13,7 @@
 #include "device_launch_parameters.h"
 #include "sm_32_atomic_functions.h"
 #include <iomanip> 
-
+#include <chrono>
 using namespace std;
 
 __device__ __managed__ int gAlpha;
@@ -1187,9 +1187,7 @@ int Pv_Split(Configuration* configuration, int depth,int alpha,int beta) {
 
 int main() {
 	string line;
-	clock_t start;
 	clock_t total_start;
-	double duration;
 	ifstream testFile("configurations.txt");
 	ofstream writeInFileB;
 	ofstream writeInFileT;
@@ -1204,7 +1202,7 @@ int main() {
 	//GenerateResult(nullptr, 2);
 	if (testFile.is_open()) {
 		
-
+	
 		int i = 0;
 		total_start = clock();
 		while (getline(testFile, line)) {
@@ -1212,7 +1210,7 @@ int main() {
 			c = (Configuration*)malloc(sizeof(Configuration));
 			c = new Configuration(line);		
 			writeInFileB << *c;
-			start = clock();
+			auto s= chrono::steady_clock::now();
 			r = FirstSevenMoves(c);
 			if (r == 0)
 			{
@@ -1220,10 +1218,11 @@ int main() {
 				if (!(r % 2 == 0))
 					r = -r;
 			}
-			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
-			//writeInFileT << i << " " << setprecision(8)<< duration<<endl;
+			auto e = chrono::steady_clock::now();
+			auto elapsed = chrono::duration_cast<std::chrono::microseconds>(e - s);
+			writeInFileT << i << " "<<elapsed.count()<< " \u00B5s" <<endl;
 			writeInFileB << "Configuration Number: " << i << endl;
-			writeInFileB << "Duration: " << setprecision(8)<<duration << endl;
+			writeInFileB << "Duration: " <<elapsed.count()<<" \u00B5s"<<endl;
 			writeInFileB << "Number Of Turn Until Some Win: " << r << endl;
 			//writeInFileB << "Number Of Nodes Calculated: " << nodeCount << endl;
 			writeInFileB << "________________________________" << endl;
@@ -1239,7 +1238,7 @@ int main() {
 
 	testFile.close();
 	writeInFileB.close();
-	//writeInFileT.close();
+	writeInFileT.close();
 	cout << ((clock() - total_start) / (double)CLOCKS_PER_SEC) << endl;
 	system("pause");
     return 0;
